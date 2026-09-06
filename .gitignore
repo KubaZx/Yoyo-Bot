@@ -1,0 +1,5 @@
+.env
+players.json
+.venv/
+__pycache__/
+.idea/

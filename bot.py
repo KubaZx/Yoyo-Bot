@@ -39,9 +39,11 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+
 # guard for messages from bots
     if message.author.bot:
         return
+
 # guard for DMs
     if message.guild is None:
         await message.channel.send("Hey, I only work on servers 😁")
@@ -483,5 +485,10 @@ async def on_message(message):
         embed.add_field(name='OTHER', value="**!hello** - bot will welcome you :D\n**!ping** - check the actual latency between bot and discord\n**!form** - type this command and write your question, bot will start the form\n**!help** - type this command to see what you're looking for (help menu)", inline=False)
         await message.channel.send(embed=embed)
     await client.process_commands(message)
+
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.BadArgument):
+        await ctx.send("Give me a number, for example !dice 10")
 
 client.run(DISCORD_TOKEN)

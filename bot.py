@@ -412,10 +412,6 @@ async def on_message(message):
     elif message.content.lower() == '!choose':
         answers = ['yes', 'maybe', 'no']
         await message.channel.send(random.choice(answers))
-# Coinflip - 50/50
-    elif message.content.lower() == '!coinflip':
-        coin = ['heads', 'tails']
-        await message.channel.send(random.choice(coin))
 
 # Roulette system
     elif message.content.lower().startswith('!roulette'):

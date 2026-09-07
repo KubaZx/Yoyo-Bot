@@ -1,30 +1,18 @@
 import discord
 from discord.ext import commands
 import random
-import json
 import os
 import time
 from dotenv import load_dotenv
 import openai
 import copy
+from utils.data import players, DEFAULT_PROFILE, save_data
 
 load_dotenv(dotenv_path='.env')
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
 openai_client = openai.AsyncOpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
 
-def load_data():
-    if os.path.exists('players.json'):
-        with open('players.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {}
-
-def save_data(data):
-    with open('players.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-players = load_data()
-DEFAULT_PROFILE = {'xp': 0, 'level': 1, 'money': 0, 'last_daily': 0, 'messages': 0, 'total_messages': 0, 'achievements': {'500_messages': False, 'level_5': False, '500_money': False}, 'ai_memory': []}
 pending_bets = {}
 
 intents = discord.Intents.default()
@@ -488,7 +476,9 @@ async def on_message(message):
 
 @client.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.BadArgument):
+    if isinstance(error, commands.CommandNotFound):
+        return
+    elif isinstance(error, commands.BadArgument):
         await ctx.send("Give me a number, for example !dice 10")
     else:
         print(error)

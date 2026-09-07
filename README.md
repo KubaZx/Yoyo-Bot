@@ -110,3 +110,6 @@ python bot.py
 - [ ] Shop with roles, titles and double XP boosts
 - [ ] Function calling/tool use for AI
 - [ ] Rate limit for AI commands
+
+## License
+This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.

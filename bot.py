@@ -473,21 +473,6 @@ async def on_message(message):
         await sent_form.add_reaction('👍')
         await sent_form.add_reaction('👎')
 
-# Game of rock, paper and scissors
-    elif message.content.lower().startswith('!rps'):
-        player_choice = (message.content.lower()[5:])
-        choices = ['rock', 'paper', 'scissors']
-        if player_choice not in choices:
-            await message.channel.send("Wrong choice! Pick rock, paper or scissors")
-            return
-        bot_choice = random.choice(choices)
-        if player_choice == bot_choice:
-            await message.channel.send(f"Bot picked {bot_choice}. Draw!")
-        elif (player_choice == 'rock' and bot_choice == 'scissors') or (player_choice == 'scissors' and bot_choice == 'paper') or (player_choice == 'paper' and bot_choice == 'rock'):
-            await message.channel.send(f"Bot picked {bot_choice}. You won!")
-        else:
-            await message.channel.send(f"Bot picked {bot_choice}. You lost!")
-
 # Command help - showing all existing commands
     elif message.content.lower() == '!help':
         embed = discord.Embed(title='List of commands', color=0x9B59B6)

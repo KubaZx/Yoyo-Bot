@@ -6,6 +6,7 @@ class Games(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+# Roll a random number
     @commands.command(name='dice')
     async def dice(self, ctx, sides: int = 6):
         if sides < 2:

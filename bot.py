@@ -149,19 +149,7 @@ async def on_message(message):
 # Check the actual latency between discord and Bot
     elif message.content.lower() == '!ping':
         await message.channel.send(f"Latency is {round(client.latency * 1000)} ms")
-# Roll a random number
-    elif message.content.lower().startswith('!dice'):
-        parts = message.content.lower().split()
-        sides = 6
-        if len(parts) > 1:
-            if not parts[1].isdigit():
-                await message.channel.send("Give me a number, for example !dice 10")
-                return
-            sides = int(parts[1])
-            if sides < 2:
-                await message.channel.send("A dice needs at least 2 sides!")
-                return
-        await message.channel.send(f"You rolled {random.randint(1, sides)}!")
+
 # transfer money to another player
     elif message.content.lower().startswith('!give'):
         parts = message.content.lower().split()
@@ -190,6 +178,7 @@ async def on_message(message):
         players[target_key]['money'] += amount
         save_data(players)
         await message.channel.send(f"Nice! You have transferred {amount} money to <@{target_id}>")
+
 # Check the statistics for the actual server
     elif message.content.lower() == '!stats':
         server_players = {k: v for k, v in players.items() if k.endswith("_" + str(message.guild.id))}
@@ -206,6 +195,7 @@ async def on_message(message):
         embed.add_field(name='The Richest Person 👤💸', value=f"<@{richest_person[0].split('_')[0]}> has {richest_person[1]['money']}", inline=False)
         embed.add_field(name='Number of messages 📨', value=total_messages, inline=False)
         await message.channel.send(embed=embed)
+
 # Challenge another person for coinflip
     elif message.content.lower().startswith('!challenge'):
         parts = message.content.lower().split()
@@ -238,6 +228,7 @@ async def on_message(message):
             return
         pending_bets[target_key] = {'challenger': person_key, 'amount': amount}
         await message.channel.send(f"<@{target_id}> you've been challenged by {message.author.mention} for {amount} Money! Type !accept to take this bet")
+
 # Accept the challenge
     elif message.content.lower() == '!accept':
         if person_key not in pending_bets:
@@ -515,5 +506,6 @@ async def on_message(message):
         embed.add_field(name='AI', value="**!ai** - You type !ai and write your question, bot will answer you (basic model)\n**!ai <#channel>** - the same as !ai but this time bot reads your channel history and comments on it, for example: !ai #games what games should we play? (basic model)\n**!aipro** - the same command as !ai but with pro model\n**!aireset** - reset AI memory with one command and start a fresh conversation", inline=False)
         embed.add_field(name='OTHER', value="**!hello** - bot will welcome you :D\n**!ping** - check the actual latency between bot and discord\n**!form** - type this command and write your question, bot will start the form\n**!help** - type this command to see what you're looking for (help menu)", inline=False)
         await message.channel.send(embed=embed)
+    await client.process_commands(message)
 
 client.run(DISCORD_TOKEN)

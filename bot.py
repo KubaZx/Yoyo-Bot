@@ -490,5 +490,8 @@ async def on_message(message):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.BadArgument):
         await ctx.send("Give me a number, for example !dice 10")
+    else:
+        print(error)
+        await ctx.send("Something went wrong!")
 
 client.run(DISCORD_TOKEN)

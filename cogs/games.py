@@ -20,6 +20,11 @@ class Games(commands.Cog):
         coin = ['heads', 'tails']
         await ctx.send(random.choice(coin))
 
+    # Choose between yes/maybe/no
+    @commands.command(name='choose')
+    async def choose(self, ctx):
+        answers = ['yes', 'maybe', 'no']
+        await ctx.send(random.choice(answers))
+
 async def setup(bot):
     await bot.add_cog(Games(bot))
-

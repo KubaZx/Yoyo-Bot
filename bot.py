@@ -408,11 +408,6 @@ async def on_message(message):
             print(e)
             await temp_message.edit(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
 
-# Choose between yes/maybe/no
-    elif message.content.lower() == '!choose':
-        answers = ['yes', 'maybe', 'no']
-        await message.channel.send(random.choice(answers))
-
 # Roulette system
     elif message.content.lower().startswith('!roulette'):
         parts = message.content.lower().split()

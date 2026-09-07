@@ -23,6 +23,7 @@ client = commands.Bot(command_prefix='!', intents=intents)
 @client.event
 async def on_ready():
     await client.load_extension('cogs.games')
+    await client.load_extension('cogs.profile')
     print(f'Bot is running as {client.user}')
 
 @client.event
@@ -86,10 +87,6 @@ async def on_message(message):
         embed.add_field(name='Money', value=player_data['money'], inline=True)
         embed.set_thumbnail(url=message.author.display_avatar.url)
         await message.channel.send(embed=embed)
-
-# TODO: Showing player card with pillow:
-    elif message.content.lower() == '!card':
-        await message.channel.send("Work in progress 🫡")
 
 # Profile of achievements
     elif message.content.lower() == '!achievements':

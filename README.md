@@ -4,7 +4,7 @@ Discord bot with a leveling system, custom currency, games and AI integration.
 
 ## Features
 
-- 📈 **Leveling system** - Leveling system with XP and level-up rewards
+- 📈 **Leveling system** - XP for every message, rewards on level up
 - 💰 **Economy system** - currency earned through activity and daily rewards, spent on games and transfers between players
 - 🎮 **Games** - dice, coinflip, rock-paper-scissors, roulette
 - 🤖 **AI** - DeepSeek, two models, conversation memory, channel context
@@ -15,6 +15,23 @@ Discord bot with a leveling system, custom currency, games and AI integration.
 - discord.py
 - openai
 - python-dotenv
+
+## Discord bot setup
+1. Create account on [Discord Developer Portal](https://discord.com/developers/home), then create a new application
+
+2. Go to the Bot tab, click reset token, save this token, you will need it later.
+
+3. In the same Bot tab, scroll down to Privileged Gateway Intents and enable Message Content Intent. Without it the bot won't be able to read messages.
+
+4. Next go to OAuth2 Tab, check the `bot` scope, then below in Bot Permissions select:
+   - Send messages ✅ 
+   - Send Messages in Threads ✅ 
+   - Read Message History ✅ 
+   - Add Reactions ✅
+
+5. Copy the generated URL at the bottom of the page, open it in a new tab and add the bot to your server
+
+6. If you want to use AI, go to the [DeepSeek Platform](https://platform.deepseek.com). Create your API Key in the `API keys` tab, and later copy this to `.env` file
 
 ## Setup
 1. Clone the repository:

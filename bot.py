@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 import random
 import json
 import os
@@ -29,10 +30,11 @@ pending_bets = {}
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = discord.Client(intents=intents)
+client = commands.Bot(command_prefix='!', intents=intents)
 
 @client.event
 async def on_ready():
+    await client.load_extension('cogs.games')
     print(f'Bot is running as {client.user}')
 
 @client.event

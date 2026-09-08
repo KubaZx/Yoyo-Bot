@@ -232,12 +232,6 @@ async def on_message(message):
             print(e)
             await temp_message.edit(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
 
-# Creating a form
-    elif message.content.lower().startswith('!form'):
-        sent_form = await message.channel.send('Form: ' + message.content[5:])
-        await sent_form.add_reaction('👍')
-        await sent_form.add_reaction('👎')
-
 # Command help - showing all existing commands
     elif message.content.lower() == '!help':
         embed = discord.Embed(title='List of commands', color=0x9B59B6)

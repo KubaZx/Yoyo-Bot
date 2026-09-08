@@ -52,6 +52,11 @@ DEEPSEEK_API_KEY=your_key_here
 python bot.py
 ```
 
+## Structure
+- `bot.py` - entry point, event handlers, loads cogs
+- `cogs/` - command modules
+- `utils/` - shared data and API client
+
 ## Commands
 ### Profile
 | Command         | Description |
@@ -81,12 +86,12 @@ python bot.py
 | `!choose` |  bot is choosing instead of you, he has options (yes/maybe/no)|
 
 ### AI
-| Command | Description                                                                                                                                       |
-|---------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| `!ai` | you type !ai and write your question, bot will answer you (basic model)                                                                           |
-| `!ai <#channel>` | the same as !ai but this time bot reads your channel history and comments on it, for example: !ai #games what games should we play? (basic model) |
-| `!aipro` | the same command as !ai but with pro model                                                                                                        |
-| `!aireset` | reset AI memory with one command and start a fresh conversation                                                                                   |
+| Command      | Description                                                                                                                                              |
+|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `!ai`        | you type !ai and write your question, bot will answer you (basic model)                                                                                  |
+| `!aichannel` | the same as !ai but this time bot reads your channel history and comments on it, for example: !aichannel #games what games should we play? (basic model) |
+| `!aipro`     | the same command as !ai but with pro model                                                                                                               |
+| `!aireset`   | reset AI memory with one command and start a fresh conversation                                                                                          |
 
 ### Other
 | Command | Description|
@@ -101,9 +106,12 @@ python bot.py
 
 ## Roadmap
 
-- [ ] Split the bot into modules
+- [x] Split the bot into modules
 - [ ] Move from JSON to SQLite database
+- [ ] Dockerfile
+- [ ] Deploy the bot for 24/7 uptime
 - [ ] Slash commands
+- [ ] Add requirements.txt
 - [ ] Add unit tests for economy logic
 - [ ] Replace print() with proper logging
 - [ ] Player card with Pillow

@@ -80,7 +80,9 @@ async def on_message(message):
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        return
+        await ctx.send("Wrong command! To get help check the !help command")
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"You forgot an argument for {ctx.command.name}, use: !{ctx.command.name} {ctx.command.usage}")
     elif isinstance(error, commands.BadArgument):
         await ctx.send(f"Wrong argument for command {ctx.command.name}, use: !{ctx.command.name} {ctx.command.usage}")
     else:

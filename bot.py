@@ -86,35 +86,6 @@ async def on_message(message):
     elif message.content.lower() == '!ping':
         await message.channel.send(f"Latency is {round(client.latency * 1000)} ms")
 
-# transfer money to another player
-    elif message.content.lower().startswith('!give'):
-        parts = message.content.lower().split()
-        if len(parts) < 3:
-            await message.channel.send("You typed the wrong command! For example, !give @Jason 100")
-            return
-        if not parts[2].isdigit():
-            await message.channel.send("Give me a number of money that you want to give the person! For example, !give @Jason 100")
-            return
-        amount = int(parts[2])
-        if amount <= 0:
-            await message.channel.send("The amount must be greater than 0!")
-            return
-        target_id = parts[1].replace("<@", "").replace(">", "")
-        if str(message.author.id) == target_id:
-            await message.channel.send("You can't give money to yourself!")
-            return
-        target_key = f"{target_id}_{message.guild.id}"
-        if target_key not in players:
-            await message.channel.send("This person is not in the database!")
-            return
-        if players[person_key]['money'] < amount:
-            await message.channel.send("You don't have enough money!")
-            return
-        players[person_key]['money'] -= amount
-        players[target_key]['money'] += amount
-        save_data(players)
-        await message.channel.send(f"Nice! You have transferred {amount} money to <@{target_id}>")
-
 # Challenge another person for coinflip
     elif message.content.lower().startswith('!challenge'):
         parts = message.content.lower().split()

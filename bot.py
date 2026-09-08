@@ -328,35 +328,6 @@ async def on_message(message):
         except ValueError:
             await message.channel.send("The amount must be a number! For example: !roulette red 20")
 
-# steal money from another player - 50% chance
-    elif message.content.lower().startswith("!steal"):
-        parts = message.content.lower().split()
-        if len(parts) < 2:
-            await message.channel.send("Wrong format! For example: !steal @Jason")
-            return
-        target_id = parts[1].replace("<@", "").replace(">", "")
-        target_key = f"{target_id}_{message.guild.id}"
-        if str(message.author.id) == target_id:
-            await message.channel.send("You can't steal from yourself!")
-            return
-        if target_key in players:
-            if players[person_key]['money'] > 0 and players[target_key]['money'] > 0:
-                stolen_money = random.randint(1, players[target_key]['money'])
-                if random.randint(1, 2) == 1:
-                    players[person_key]['money'] += stolen_money
-                    players[target_key]['money'] -= stolen_money
-                    await message.channel.send(f"You stole {stolen_money} Money! 😈")
-                    save_data(players)
-                else:
-                    lost = min(players[person_key]['money'], stolen_money)
-                    players[person_key]['money'] -= lost
-                    await message.channel.send(f"Not this time, you lost {lost} money 😪")
-                    save_data(players)
-            else:
-                await message.channel.send("You or the other person doesn't have enough money!")
-        else:
-            await message.channel.send("This person is not in the database!")
-
 # Creating a form
     elif message.content.lower().startswith('!form'):
         sent_form = await message.channel.send('Form: ' + message.content[5:])

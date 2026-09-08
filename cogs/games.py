@@ -6,7 +6,7 @@ class Games(commands.Cog):
         self.bot = bot
 
     # Roll a random number
-    @commands.command(name='dice')
+    @commands.command(name='dice', usage='10')
     async def dice(self, ctx, sides: int = 6):
         if sides < 2:
             await ctx.send("A dice needs at least 2 sides!")
@@ -26,7 +26,7 @@ class Games(commands.Cog):
         await ctx.send(random.choice(answers))
 
     # Game of rock, paper and scissors
-    @commands.command(name='rps')
+    @commands.command(name='rps', usage='paper')
     async def rps(self, ctx, player_choice: str = ""):
         choices = ['rock', 'paper', 'scissors']
         if player_choice not in choices:

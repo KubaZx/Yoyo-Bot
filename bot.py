@@ -260,7 +260,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         return
     elif isinstance(error, commands.BadArgument):
-        await ctx.send(f"Wrong argument for command {ctx.command.name}, check !help")
+        await ctx.send(f"Wrong argument for command {ctx.command.name}, use: !{ctx.command.name} {ctx.command.usage}")
     else:
         print(error)
         await ctx.send("Something went wrong!")

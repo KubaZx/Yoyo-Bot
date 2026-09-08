@@ -22,8 +22,9 @@ class Economy(commands.Cog):
             save_data(players)
         else:
             await ctx.send("You already claimed your daily bonus today!")
+
     # transfer money to another player
-    @commands.command(name='give')
+    @commands.command(name='give', usage='@Jason 100')
     async def give(self, ctx, target: discord.Member, amount: int):
         person_key = f"{ctx.author.id}_{ctx.guild.id}"
         if amount <= 0:
@@ -45,7 +46,7 @@ class Economy(commands.Cog):
         await ctx.send(f"Nice! You have transferred {amount} money to {target.mention}")
 
     # steal money from another player - 50% chance
-    @commands.command(name='steal')
+    @commands.command(name='steal', usage='@Jason')
     async def steal(self, ctx, target: discord.Member):
         person_key = f"{ctx.author.id}_{ctx.guild.id}"
         target_key = f"{target.id}_{ctx.guild.id}"
@@ -71,7 +72,7 @@ class Economy(commands.Cog):
             save_data(players)
 
     # roulette system
-    @commands.command(name='roulette')
+    @commands.command(name='roulette', usage='red 20')
     async def roulette(self, ctx, color: str = "", amount: int = 0):
         person_key = f"{ctx.author.id}_{ctx.guild.id}"
         if amount <= 0:
@@ -94,7 +95,7 @@ class Economy(commands.Cog):
             save_data(players)
 
     # challenge another person for coinflip
-    @commands.command(name='challenge')
+    @commands.command(name='challenge', usage='@Jason 100')
     async def challenge(self, ctx, target: discord.Member, amount: int):
         person_key = f"{ctx.author.id}_{ctx.guild.id}"
         target_key = f"{target.id}_{ctx.guild.id}"

@@ -1,5 +1,3 @@
-from wsgiref.simple_server import server_version
-
 import discord
 from discord.ext import commands
 from utils.data import players

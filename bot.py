@@ -86,66 +86,6 @@ async def on_message(message):
     elif message.content.lower() == '!ping':
         await message.channel.send(f"Latency is {round(client.latency * 1000)} ms")
 
-# Challenge another person for coinflip
-    elif message.content.lower().startswith('!challenge'):
-        parts = message.content.lower().split()
-        if len(parts) < 3:
-            await message.channel.send("You typed the wrong command! For example, !challenge @Jason 100")
-            return
-        if not parts[2].isdigit():
-            await message.channel.send("You didn't give me an amount! For example, !challenge @Jason 100")
-            return
-        amount = int(parts[2])
-        if amount <= 0:
-            await message.channel.send("The amount must be greater than 0!")
-            return
-        target_id = parts[1].replace("<@", "").replace(">", "")
-        target_key = f"{target_id}_{message.guild.id}"
-        if str(message.author.id) == target_id:
-            await message.channel.send("You can't challenge yourself!")
-            return
-        if target_key not in players:
-            await message.channel.send("This person is not in the database!")
-            return
-        if target_key in pending_bets:
-            await message.channel.send("This person already has a pending challenge!")
-            return
-        if players[person_key]['money'] < amount:
-            await message.channel.send("You don't have enough money to challenge this person")
-            return
-        if players[target_key]['money'] < amount:
-            await message.channel.send("The person you want to challenge with doesn't have enough money!")
-            return
-        pending_bets[target_key] = {'challenger': person_key, 'amount': amount}
-        await message.channel.send(f"<@{target_id}> you've been challenged by {message.author.mention} for {amount} Money! Type !accept to take this bet")
-
-# Accept the challenge
-    elif message.content.lower() == '!accept':
-        if person_key not in pending_bets:
-            await message.channel.send("You don't have any pending challenge")
-            return
-        challenger_key = pending_bets[person_key]['challenger']
-        bet_amount = pending_bets[person_key]['amount']
-        if players[challenger_key]['money'] < bet_amount:
-            await message.channel.send("The person who challenged you doesn't have enough money to start the challenge")
-            del pending_bets[person_key]
-            return
-        if players[person_key]['money'] < bet_amount:
-            await message.channel.send("You don't have enough money for this challenge")
-            del pending_bets[person_key]
-            return
-        del pending_bets[person_key]
-        draw = random.choice([person_key, challenger_key])
-        if draw == person_key:
-            players[person_key]['money'] += bet_amount
-            players[challenger_key]['money'] -= bet_amount
-            await message.channel.send(f"Congratulations <@{person_key.split('_')[0]}>, you won {bet_amount} Money!")
-        else:
-            players[challenger_key]['money'] += bet_amount
-            players[person_key]['money'] -= bet_amount
-            await message.channel.send(f"Congratulations <@{challenger_key.split('_')[0]}>, you won {bet_amount} Money!")
-        save_data(players)
-
 # AI with channel context - read 50 messages from the given channel
     elif message.content.lower().startswith('!ai <#'):
         parts = message.content.lower().split()
@@ -320,7 +260,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         return
     elif isinstance(error, commands.BadArgument):
-        await ctx.send("Give me a number, for example !dice 10")
+        await ctx.send(f"Wrong argument for command {ctx.command.name}, check !help")
     else:
         print(error)
         await ctx.send("Something went wrong!")

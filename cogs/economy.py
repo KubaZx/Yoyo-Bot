@@ -8,6 +8,7 @@ from utils.data import players, save_data
 class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.pending_bets = {}
 
     # daily money, once per day
     @commands.command(name='daily')
@@ -91,6 +92,61 @@ class Economy(commands.Cog):
             await ctx.send(f"The color is {result}. Not this time 😪")
             players[person_key]['money'] -= amount
             save_data(players)
+
+    # challenge another person for coinflip
+    @commands.command(name='challenge')
+    async def challenge(self, ctx, target: discord.Member, amount: int):
+        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        target_key = f"{target.id}_{ctx.guild.id}"
+        if amount <= 0:
+            await ctx.send("The amount must be greater than 0!")
+            return
+        if ctx.author.id == target.id:
+            await ctx.send("You can't challenge yourself!")
+            return
+        if target_key not in players:
+            await ctx.send("This person is not in the database!")
+            return
+        if target_key in self.pending_bets:
+            await ctx.send("This person already has a pending challenge!")
+            return
+        if players[person_key]['money'] < amount:
+            await ctx.send("You don't have enough money to challenge this person!")
+            return
+        if players[target_key]['money'] < amount:
+            await ctx.send("The person you want to challenge with doesn't have enough money!")
+            return
+        self.pending_bets[target_key] = {'challenger': person_key, 'amount': amount}
+        await ctx.send(f"{target.mention} You've been challenged by {ctx.author.mention} for {amount} Money! Type !accept to take this bet.")
+
+    # accept the challenge
+    @commands.command(name='accept')
+    async def accept(self, ctx):
+        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        if person_key not in self.pending_bets:
+            await ctx.send("You don't have any pending challenge!")
+            return
+        challenger_key = self.pending_bets[person_key]['challenger']
+        bet_amount = self.pending_bets[person_key]['amount']
+        if players[challenger_key]['money'] < bet_amount:
+            await ctx.send("The person who challenged you, doesn't have enough money to start the challenge!")
+            del self.pending_bets[person_key]
+            return
+        if players[person_key]['money'] < bet_amount:
+            await ctx.send("You don't have enough money for this challenge!")
+            del self.pending_bets[person_key]
+            return
+        del self.pending_bets[person_key]
+        draw = random.choice([person_key, challenger_key])
+        if draw == person_key:
+            players[person_key]['money'] += bet_amount
+            players[challenger_key]['money'] -= bet_amount
+            await ctx.send(f"Congratulations {ctx.author.mention}, you won {bet_amount} Money! 💰")
+        else:
+            players[challenger_key]['money'] += bet_amount
+            players[person_key]['money'] -= bet_amount
+            await ctx.send(f"Congratulations <@{challenger_key.split('_')[0]}>, you won {bet_amount} Money! 💰")
+        save_data(players)
 
 async def setup(bot):
     await bot.add_cog(Economy(bot))

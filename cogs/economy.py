@@ -2,7 +2,7 @@ import discord
 import time
 import random
 from discord.ext import commands
-from utils.data import players, save_data
+from utils.data import players, save_data, get_person_key
 
 
 class Economy(commands.Cog):
@@ -13,7 +13,7 @@ class Economy(commands.Cog):
     # daily money, once per day
     @commands.command(name='daily')
     async def daily(self, ctx):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         player_data = players[person_key]
         if time.time() - player_data['last_daily'] >= 86400:
             players[person_key]['money'] += 100
@@ -26,7 +26,7 @@ class Economy(commands.Cog):
     # transfer money to another player
     @commands.command(name='give', usage='@Jason 100')
     async def give(self, ctx, target: discord.Member, amount: int):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         if amount <= 0:
             await ctx.send("The amount must be greater than 0!")
             return
@@ -48,7 +48,7 @@ class Economy(commands.Cog):
     # steal money from another player - 50% chance
     @commands.command(name='steal', usage='@Jason')
     async def steal(self, ctx, target: discord.Member):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         target_key = f"{target.id}_{ctx.guild.id}"
         if ctx.author.id == target.id:
             await ctx.send("You can't steal from yourself")
@@ -74,7 +74,7 @@ class Economy(commands.Cog):
     # roulette system
     @commands.command(name='roulette', usage='red 20')
     async def roulette(self, ctx, color: str = "", amount: int = 0):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         if amount <= 0:
             await ctx.send("The amount must be greater than 0!")
             return
@@ -97,7 +97,7 @@ class Economy(commands.Cog):
     # challenge another person for coinflip
     @commands.command(name='challenge', usage='@Jason 100')
     async def challenge(self, ctx, target: discord.Member, amount: int):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         target_key = f"{target.id}_{ctx.guild.id}"
         if amount <= 0:
             await ctx.send("The amount must be greater than 0!")
@@ -123,7 +123,7 @@ class Economy(commands.Cog):
     # accept the challenge
     @commands.command(name='accept')
     async def accept(self, ctx):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         if person_key not in self.pending_bets:
             await ctx.send("You don't have any pending challenge!")
             return

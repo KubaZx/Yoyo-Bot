@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils.data import players
+from utils.data import players, get_person_key
 
 class Profile(commands.Cog):
     def __init__(self, bot):
@@ -14,7 +14,7 @@ class Profile(commands.Cog):
     # Player profile, showing level; xp ; money
     @commands.command(name='profile')
     async def profile(self, ctx):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         player_data = players[person_key]
         embed = discord.Embed(title='Player Profile', color=0x00ff00)
         embed.add_field(name='Level', value=player_data['level'], inline=True)
@@ -26,7 +26,7 @@ class Profile(commands.Cog):
     # Profile of achievements
     @commands.command(name='achievements')
     async def achievements(self, ctx):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         achievements_data = players[person_key]
         embed = discord.Embed(title='Achievements', color=0x079DFA)
         if achievements_data['achievements']['500_messages']:

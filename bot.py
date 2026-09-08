@@ -78,19 +78,6 @@ async def on_message(message):
         await message.channel.send("Achievement unlocked! You reached 500 messages!")
         save_data(players)
 
-# List of top players from server
-    elif message.content.lower() == '!top':
-        server_players = {k: v for k, v in players.items() if k.endswith("_" + str(message.guild.id))}
-        ranking = sorted(server_players.items(), key=lambda x: (x[1]['level'], x[1]['xp'], x[1]['money']), reverse=True)
-        embed = discord.Embed(title='Top players 🏆', color=0xE0D90D)
-        for i, (player_id, data) in enumerate(ranking[:10]):
-            embed.add_field(
-                name=f'{i + 1}. place',
-                value=f'<@{player_id.split("_")[0]}> | Level {data["level"]} | XP: {data["xp"]}/{data["level"] * 100} | Money {data["money"]}',
-                inline=False
-            )
-        await message.channel.send(embed=embed)
-
 # daily money, once per day
     elif message.content.lower() == '!daily':
         player_data = players[person_key]

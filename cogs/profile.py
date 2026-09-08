@@ -43,5 +43,19 @@ class Profile(commands.Cog):
             embed.add_field(name='500 money', value='❌', inline=False)
         await ctx.send(embed=embed)
 
+    #List of top players from server
+    @commands.command(name='top')
+    async def top(self, ctx):
+        server_players = {k: v for k, v in players.items() if k.endswith("_" + str(ctx.guild.id))}
+        ranking = sorted(server_players.items(), key=lambda x: (x[1]['level'], x[1]['xp'], x[1]['money']), reverse=True)
+        embed = discord.Embed(title='Top players 🏆', color=0xE0D90D)
+        for i, (player_id, data) in enumerate(ranking[:10]):
+            embed.add_field(
+                name=f'{i + 1}. place',
+                value=f'<@{player_id.split("_")[0]}> | Level {data["level"]} | XP: {data["xp"]}/{data["level"] * 100} | Money {data["money"]}',
+                inline=False
+            )
+        await ctx.send(embed=embed)
+
 async def setup(bot):
     await bot.add_cog(Profile(bot))

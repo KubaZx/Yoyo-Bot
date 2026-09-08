@@ -125,23 +125,6 @@ async def on_message(message):
         save_data(players)
         await message.channel.send(f"Nice! You have transferred {amount} money to <@{target_id}>")
 
-# Check the statistics for the actual server
-    elif message.content.lower() == '!stats':
-        server_players = {k: v for k, v in players.items() if k.endswith("_" + str(message.guild.id))}
-        if not server_players:
-            await message.channel.send("No players on this server yet!")
-            return
-        player_count = len(server_players)
-        total_money = sum(profile['money'] for profile in server_players.values())
-        total_messages = sum(profile['total_messages'] for profile in server_players.values())
-        richest_person = max(server_players.items(), key=lambda x: x[1]['money'])
-        embed = discord.Embed(title='Server Stats 📈', color=0x9B59B6)
-        embed.add_field(name='Number of players 👤', value=player_count, inline=False)
-        embed.add_field(name='Amount of Money 💸', value=total_money, inline=False)
-        embed.add_field(name='The Richest Person 👤💸', value=f"<@{richest_person[0].split('_')[0]}> has {richest_person[1]['money']}", inline=False)
-        embed.add_field(name='Number of messages 📨', value=total_messages, inline=False)
-        await message.channel.send(embed=embed)
-
 # Challenge another person for coinflip
     elif message.content.lower().startswith('!challenge'):
         parts = message.content.lower().split()

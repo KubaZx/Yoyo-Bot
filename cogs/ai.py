@@ -109,7 +109,7 @@ class AI(commands.Cog):
             await temp_message.edit(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
 
     # AI with channel context - read 50 messages from the given channel
-    @commands.command(name='aichannel')
+    @commands.command(name='aichannel', usage='#games what games should we play?')
     async def aichannel(self, ctx, channel: discord.TextChannel, *, question: str):
         temp_message = await ctx.reply("Reading history and thinking...")
         try:

@@ -24,6 +24,7 @@ client = commands.Bot(command_prefix='!', intents=intents)
 async def on_ready():
     await client.load_extension('cogs.games')
     await client.load_extension('cogs.profile')
+    await client.load_extension('cogs.economy')
     print(f'Bot is running as {client.user}')
 
 @client.event
@@ -77,17 +78,6 @@ async def on_message(message):
         players[person_key]['achievements']['500_messages'] = True
         await message.channel.send("Achievement unlocked! You reached 500 messages!")
         save_data(players)
-
-# daily money, once per day
-    elif message.content.lower() == '!daily':
-        player_data = players[person_key]
-        if time.time() - player_data['last_daily'] >= 86400:
-            players[person_key]['money'] += 100
-            players[person_key]['last_daily'] = time.time()
-            await message.channel.send(f"{message.author.mention} You claimed 100 Money! 💸")
-            save_data(players)
-        else:
-            await message.channel.send('You already claimed your daily bonus today!')
 
 # Simple chat commands
     elif message.content.lower() == '!hello':

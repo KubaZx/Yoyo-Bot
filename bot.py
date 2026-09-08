@@ -298,36 +298,6 @@ async def on_message(message):
             print(e)
             await temp_message.edit(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
 
-# Roulette system
-    elif message.content.lower().startswith('!roulette'):
-        parts = message.content.lower().split()
-        if len(parts) < 3:
-            await message.channel.send("Wrong format! For example: !roulette red 20")
-            return
-        color = parts[1]
-        amount = parts[2]
-        try:
-            if int(amount) <= 0:
-                await message.channel.send("The amount must be greater than 0!")
-                return
-            if color not in ['red', 'black', 'green']:
-                await message.channel.send("Wrong color! Choose: red, black or green")
-                return
-            if players[person_key]['money'] >= int(amount):
-                result = random.choices(['red', 'black', 'green'], weights=[47.5, 47.5, 5])[0]
-                if result == color:
-                    players[person_key]['money'] += int(amount) * 2
-                    await message.channel.send(f"{message.author.mention} The color is {result}. You won! 💰")
-                    save_data(players)
-                else:
-                    await message.channel.send(f"The color is {result}. Not this time 😥")
-                    players[person_key]['money'] -= int(amount)
-                    save_data(players)
-            else:
-                await message.channel.send("You don't have enough money!")
-        except ValueError:
-            await message.channel.send("The amount must be a number! For example: !roulette red 20")
-
 # Creating a form
     elif message.content.lower().startswith('!form'):
         sent_form = await message.channel.send('Form: ' + message.content[5:])

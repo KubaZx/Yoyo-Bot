@@ -69,6 +69,28 @@ class Economy(commands.Cog):
             await ctx.send(f"Not this time, you lost {lost} money 😪")
             save_data(players)
 
+    # roulette system
+    @commands.command(name='roulette')
+    async def roulette(self, ctx, color: str = "", amount: int = 0):
+        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        if amount <= 0:
+            await ctx.send("The amount must be greater than 0!")
+            return
+        if color not in ['red', 'black', 'green']:
+            await ctx.send("Wrong color! Choose: red, black or green!")
+            return
+        if players[person_key]['money'] < amount:
+            await ctx.send("You don't have enough money!")
+            return
+        result = random.choices(['red', 'black', 'green'], weights=[47.5, 47.5, 5])[0]
+        if result == color:
+            players[person_key]['money'] += amount * 2
+            await ctx.send(f"{ctx.author.mention} The color is {result}. You won! 💰")
+            save_data(players)
+        else:
+            await ctx.send(f"The color is {result}. Not this time 😪")
+            players[person_key]['money'] -= amount
+            save_data(players)
 
 async def setup(bot):
     await bot.add_cog(Economy(bot))

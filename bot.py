@@ -1,17 +1,12 @@
 import discord
 from discord.ext import commands
-import random
 import os
-import time
-from dotenv import load_dotenv
-import openai
 import copy
+from dotenv import load_dotenv
 from utils.data import players, DEFAULT_PROFILE, save_data
 
 load_dotenv(dotenv_path='.env')
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
-DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
-openai_client = openai.AsyncOpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
 
 
 intents = discord.Intents.default()
@@ -25,6 +20,7 @@ async def on_ready():
     await client.load_extension('cogs.profile')
     await client.load_extension('cogs.economy')
     await client.load_extension('cogs.misc')
+    await client.load_extension('cogs.ai')
     print(f'Bot is running as {client.user}')
 
 @client.event
@@ -78,158 +74,6 @@ async def on_message(message):
         players[person_key]['achievements']['500_messages'] = True
         await message.channel.send("Achievement unlocked! You reached 500 messages!")
         save_data(players)
-
-# AI with channel context - read 50 messages from the given channel
-    elif message.content.lower().startswith('!ai <#'):
-        parts = message.content.lower().split()
-        question = ' '.join(parts[2:]).strip()
-        if not question:
-            await message.channel.send("Write your question!")
-            return
-        channel_text = parts[1].replace('<#', '').replace('>', "")
-        if not channel_text.isdigit():
-            await message.channel.send("Give me a valid channel!")
-            return
-        channel_id = int(channel_text)
-        channel = message.guild.get_channel(channel_id)
-        if channel is None:
-            await message.channel.send("Channel not found!")
-            return
-        temp_message = await message.reply("Reading history and thinking...")
-
-        try:
-            async with message.channel.typing():
-                history = []
-                async for msg in channel.history(limit=50):
-                    history.append(f"{msg.author.name}: {msg.content}")
-                context = '\n'.join(history)
-                context += "\n\nAnswer concisely and stay on topic. Discord has a 2000 character limit, so don't write more than that. You can be casual and use light humor to keep the conversation fun."
-
-                collected_text = ""
-                last_edit = time.time()
-
-                response = await openai_client.chat.completions.create(
-                    model="deepseek-v4-flash",
-                    messages=[
-                        {"role": "system", "content": context},
-                        {"role": "user", "content": question}
-                    ],
-                    max_tokens=2500,
-                    stream=True
-                )
-                async for chunk in response:
-                    chunk_text = chunk.choices[0].delta.content
-                    if chunk_text is not None:
-                        collected_text += chunk_text
-                    if collected_text and time.time() - last_edit >= 1:
-                        await temp_message.edit(content=collected_text[:2000])
-                        last_edit = time.time()
-                first_chunk = collected_text[:2000]
-                rest = collected_text[2000:]
-                await temp_message.edit(content=first_chunk)
-
-                while len(rest) > 0:
-                    piece = rest[:2000]
-                    await message.channel.send(piece)
-                    rest = rest[2000:]
-        except Exception as e:
-            print(e)
-            await temp_message.edit(content="Something went wrong with AI, try again in a moment 😒"[:2000])
-
-# AI command using the pro model:
-    elif message.content.lower().startswith('!aipro'):
-        question = (message.content[6:].strip())
-        if not question:
-            await message.channel.send("Write your question!")
-            return
-        ai_memory = players[person_key]['ai_memory']
-        messages_to_send = ai_memory[-4:]
-        messages_to_send.insert(0, {"role": "system", "content": "Answer concisely and stay on topic. Discord has a 2000 character limit, so don't write more than that. You can be casual and use light humor to keep the conversation fun."})
-        messages_to_send.append({"role": "user", "content": question})
-        temp_message = await message.reply("Thinking...")
-        try:
-            async with message.channel.typing():
-                collected_text = ""
-                last_edit = time.time()
-                response = await openai_client.chat.completions.create(
-                    model="deepseek-v4-pro",
-                    messages=messages_to_send,
-                    max_tokens=3000,
-                    stream=True
-                )
-                async for chunk in response:
-                    chunk_text = chunk.choices[0].delta.content
-                    if chunk_text is not None:
-                        collected_text += chunk_text
-                    if collected_text and time.time() - last_edit >= 1:
-                        await temp_message.edit(content=collected_text[:2000])
-                        last_edit = time.time()
-                first_chunk = collected_text[:2000]
-                rest = collected_text[2000:]
-                await temp_message.edit(content=first_chunk)
-
-                while len(rest) > 0:
-                    piece = rest[:2000]
-                    await message.channel.send(piece)
-                    rest = rest[2000:]
-
-            ai_memory.append({"role": "user", "content": question})
-            ai_memory.append({"role": "assistant", "content": collected_text})
-            save_data(players)
-        except Exception as e:
-            print(e)
-            await temp_message.edit(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
-
-# Clear AI conversation memory
-    elif message.content.lower() == '!aireset':
-        ai_memory = players[person_key]['ai_memory']
-        ai_memory.clear()
-        save_data(players)
-        await message.channel.send("Your AI memory has been cleared!")
-
-# AI using the basic model:
-    elif message.content.lower().startswith('!ai'):
-        question = (message.content[3:].strip())
-        if not question:
-            await message.channel.send("Write your question!")
-            return
-        ai_memory = players[person_key]['ai_memory']
-        messages_to_send = ai_memory[-4:]
-        messages_to_send.insert(0, {"role": "system", "content": "Answer concisely and stay on topic. Discord has a 2000 character limit, so don't write more than that. You can be casual and use light humor to keep the conversation fun."})
-        messages_to_send.append({"role": "user", "content": question})
-        temp_message = await message.reply("Thinking...")
-        try:
-            async with message.channel.typing():
-                collected_text = ""
-                last_edit = time.time()
-                response = await openai_client.chat.completions.create(
-                    model="deepseek-v4-flash",
-                    messages=messages_to_send,
-                    max_tokens=2000,
-                    stream=True
-                )
-                async for chunk in response:
-                    chunk_text = chunk.choices[0].delta.content
-                    if chunk_text is not None:
-                        collected_text += chunk_text
-                    if collected_text and time.time() - last_edit >= 1:
-                        await temp_message.edit(content=collected_text[:2000])
-                        last_edit = time.time()
-                first_chunk = collected_text[:2000]
-                rest = collected_text[2000:]
-                await temp_message.edit(content=first_chunk)
-
-                while len(rest) > 0:
-                    piece = rest[:2000]
-                    await message.channel.send(piece)
-                    rest = rest[2000:]
-
-            ai_memory.append({"role": "user", "content": question})
-            ai_memory.append({"role": "assistant", "content": collected_text})
-            save_data(players)
-        except Exception as e:
-            print(e)
-            await temp_message.edit(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
 
     await client.process_commands(message)
 

@@ -25,6 +25,7 @@ async def on_ready():
     await client.load_extension('cogs.games')
     await client.load_extension('cogs.profile')
     await client.load_extension('cogs.economy')
+    await client.load_extension('cogs.misc')
     print(f'Bot is running as {client.user}')
 
 @client.event
@@ -78,13 +79,6 @@ async def on_message(message):
         players[person_key]['achievements']['500_messages'] = True
         await message.channel.send("Achievement unlocked! You reached 500 messages!")
         save_data(players)
-
-# Simple chat commands
-    elif message.content.lower() == '!hello':
-        await message.channel.send('Hello 👋')
-# Check the actual latency between discord and Bot
-    elif message.content.lower() == '!ping':
-        await message.channel.send(f"Latency is {round(client.latency * 1000)} ms")
 
 # AI with channel context - read 50 messages from the given channel
     elif message.content.lower().startswith('!ai <#'):

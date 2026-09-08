@@ -78,24 +78,6 @@ async def on_message(message):
         await message.channel.send("Achievement unlocked! You reached 500 messages!")
         save_data(players)
 
-# Profile of achievements
-    elif message.content.lower() == '!achievements':
-        achievements_data = players[person_key]
-        embed = discord.Embed(title='Achievements', color=0x079DFA)
-        if achievements_data['achievements']['500_messages']:
-            embed.add_field(name='500 messages', value='✅', inline=False)
-        else:
-            embed.add_field(name='500 messages', value='❌', inline=False)
-        if achievements_data['achievements']['level_5']:
-            embed.add_field(name='level 5', value='✅', inline=False)
-        else:
-            embed.add_field(name='level 5', value='❌', inline=False)
-        if achievements_data['achievements']['500_money']:
-            embed.add_field(name='500 money', value='✅', inline=False)
-        else:
-            embed.add_field(name='500 money', value='❌', inline=False)
-        await message.channel.send(embed=embed)
-
 # List of top players from server
     elif message.content.lower() == '!top':
         server_players = {k: v for k, v in players.items() if k.endswith("_" + str(message.guild.id))}

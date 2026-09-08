@@ -23,5 +23,25 @@ class Profile(commands.Cog):
         embed.set_thumbnail(url=ctx.author.display_avatar.url)
         await ctx.send(embed=embed)
 
+    #Profile of achievements
+    @commands.command(name='achievements')
+    async def achievements(self, ctx):
+        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        achievements_data = players[person_key]
+        embed = discord.Embed(title='Achievements', color=0x079DFA)
+        if achievements_data['achievements']['500_messages']:
+            embed.add_field(name='500 messages', value='✅', inline=False)
+        else:
+            embed.add_field(name='500 messages', value='❌', inline=False)
+        if achievements_data['achievements']['level_5']:
+            embed.add_field(name='Level 5', value='✅', inline=False)
+        else:
+            embed.add_field(name='Level 5', value='❌', inline=False)
+        if achievements_data['achievements']['500_money']:
+            embed.add_field(name='500 money', value='✅', inline=False)
+        else:
+            embed.add_field(name='500 money', value='❌', inline=False)
+        await ctx.send(embed=embed)
+
 async def setup(bot):
     await bot.add_cog(Profile(bot))

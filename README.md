@@ -106,18 +106,18 @@ python bot.py
 
 ## Roadmap
 
-- [x] Split the bot into modules
-- [ ] Move from JSON to SQLite database
-- [ ] Dockerfile
-- [ ] Deploy the bot for 24/7 uptime
-- [ ] Slash commands
-- [ ] Add requirements.txt
-- [ ] Add unit tests for economy logic
-- [ ] Replace print() with proper logging
-- [ ] Player card with Pillow
-- [ ] Shop with roles, titles and double XP boosts
-- [ ] Function calling/tool use for AI
-- [ ] Rate limit for AI commands
+- ✅ Split the bot into modules
+- ⬜ Move from JSON to SQLite database
+- ⬜ Dockerfile
+- ⬜ Deploy the bot for 24/7 uptime
+- ⬜ Slash commands
+- ⬜ Add requirements.txt
+- ⬜ Add unit tests for economy logic
+- ⬜ Replace print() with proper logging
+- ⬜ Player card with Pillow
+- ⬜ Shop with roles, titles and double XP boosts
+- ⬜ Function calling/tool use for AI
+- ⬜ Rate limit for AI commands
 
 ## License
 This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.

@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import os
 import copy
+import logging
 from dotenv import load_dotenv
 from utils.data import players, DEFAULT_PROFILE, save_data
 
@@ -9,6 +10,8 @@ load_dotenv(dotenv_path='.env')
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)-8s] %(name)s: %(message)s')
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -21,7 +24,7 @@ async def on_ready():
     await client.load_extension('cogs.economy')
     await client.load_extension('cogs.misc')
     await client.load_extension('cogs.ai')
-    print(f'Bot is running as {client.user}')
+    logger.info(f'Bot is running as {client.user}')
 
 @client.event
 async def on_message(message):
@@ -86,7 +89,7 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.BadArgument):
         await ctx.send(f"Wrong argument for command {ctx.command.name}, use: !{ctx.command.name} {ctx.command.usage}")
     else:
-        print(error)
+        logger.error(error, exc_info=True)
         await ctx.send("Something went wrong!")
 
-client.run(DISCORD_TOKEN)
+client.run(DISCORD_TOKEN, log_handler=None)

@@ -1,9 +1,11 @@
 import time
 import discord
+import logging
 from discord.ext import commands
-from utils.data import players, save_data
+from utils.data import players, save_data, get_person_key
 from utils.ai_client import openai_client
 
+logger = logging.getLogger(__name__)
 
 class AI(commands.Cog):
     def __init__(self, bot):
@@ -12,7 +14,7 @@ class AI(commands.Cog):
     # Clear AI conversation memory
     @commands.command(name='aireset')
     async def aireset(self, ctx):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         ai_memory = players[person_key]['ai_memory']
         ai_memory.clear()
         save_data(players)
@@ -21,7 +23,7 @@ class AI(commands.Cog):
     # AI using the basic model
     @commands.command(name='ai')
     async def ai(self, ctx, *, question: str):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         if not question:
             await ctx.send("Write your question!")
             return
@@ -60,13 +62,13 @@ class AI(commands.Cog):
             ai_memory.append({"role": "assistant", "content": collected_text})
             save_data(players)
         except Exception as e:
-            print(e)
+            logger.error(e, exc_info=True)
             await temp_message.edit(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
 
     # AI using the pro model
     @commands.command(name='aipro')
     async def aipro(self, ctx, *, question: str):
-        person_key = f"{ctx.author.id}_{ctx.guild.id}"
+        person_key = get_person_key(ctx)
         if not question:
             await ctx.send("Write your question!")
             return
@@ -105,7 +107,7 @@ class AI(commands.Cog):
             ai_memory.append({"role": "assistant", "content": collected_text})
             save_data(players)
         except Exception as e:
-            print(e)
+            logger.error(e, exc_info=True)
             await temp_message.edit(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
 
     # AI with channel context - read 50 messages from the given channel
@@ -148,7 +150,7 @@ class AI(commands.Cog):
                     await ctx.send(piece)
                     rest = rest[2000:]
         except Exception as e:
-            print(e)
+            logger.error(e, exc_info=True)
             await temp_message.edit(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
 
 async def setup(bot):

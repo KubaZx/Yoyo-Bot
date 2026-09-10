@@ -114,7 +114,7 @@ python bot.py
 - ⬜ Slash commands
 - ⬜ Add requirements.txt
 - ⬜ Add unit tests for economy logic
-- ⬜ Replace print() with proper logging
+- ✅ Replace print() with proper logging
 - ⬜ Player card with Pillow
 - ⬜ Shop with roles, titles and double XP boosts
 - ⬜ Function calling/tool use for AI

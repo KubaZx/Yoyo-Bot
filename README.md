@@ -76,6 +76,7 @@ python bot.py
 | `!steal` |  you can steal money from another player, your chance is 50%, for example !steal @Jason|
 | `!challenge` | bet money against another player, for example: !challenge @Jason 100|
 | `!accept` | accept a pending challenge|
+| `!decline` | decline a pending challenge|
 
 ### Games
 | Command | Description|

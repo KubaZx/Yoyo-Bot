@@ -149,6 +149,17 @@ class Economy(commands.Cog):
             await ctx.send(f"Congratulations <@{challenger_key.split('_')[0]}>, you won {bet_amount} Money! 💰")
         save_data(players)
 
+    # decline the challenge
+    @commands.command(name='decline')
+    async def decline(self, ctx):
+        person_key = get_person_key(ctx)
+        if person_key not in self.pending_bets:
+            await ctx.send("You don't have any pending challenge")
+            return
+        challenger_key = self.pending_bets[person_key]['challenger']
+        del self.pending_bets[person_key]
+        await ctx.send(f"<@{challenger_key.split('_')[0]}> {ctx.author.display_name} declined your challenge!")
+
 async def setup(bot):
     await bot.add_cog(Economy(bot))
     

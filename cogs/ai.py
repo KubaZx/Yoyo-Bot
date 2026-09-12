@@ -12,7 +12,7 @@ class AI(commands.Cog):
         self.bot = bot
 
     async def run_ai(self, ctx, question, model, max_tokens):
-        person_key = get_person_key(ctx)
+        person_key = get_person_key(ctx.author.id, ctx.guild.id)
         if not question:
             await ctx.send("Write your question!")
             return
@@ -59,7 +59,7 @@ class AI(commands.Cog):
     # Clear AI conversation memory
     @commands.command(name='aireset')
     async def aireset(self, ctx):
-        person_key = get_person_key(ctx)
+        person_key = get_person_key(ctx.author.id, ctx.guild.id)
         ai_memory = players[person_key]['ai_memory']
         ai_memory.clear()
         save_data(players)

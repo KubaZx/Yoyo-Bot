@@ -4,7 +4,7 @@ import os
 import copy
 import logging
 from dotenv import load_dotenv
-from utils.data import players, DEFAULT_PROFILE, save_data
+from utils.data import players, DEFAULT_PROFILE, save_data, get_person_key
 
 load_dotenv(dotenv_path='.env')
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
@@ -41,7 +41,7 @@ async def on_message(message):
         return
 
 # unique key per user per server
-    person_key = f"{message.author.id}_{message.guild.id}"
+    person_key = get_person_key(message.author.id, message.guild.id)
 
 # create profile and fill in missing fields, then handle XP and level up
     if person_key not in players:

@@ -5,6 +5,7 @@ import copy
 import logging
 from dotenv import load_dotenv
 from utils.data import players, DEFAULT_PROFILE, save_data, get_person_key
+from discord import app_commands
 
 load_dotenv(dotenv_path='.env')
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
@@ -80,18 +81,14 @@ async def on_message(message):
         await message.channel.send("Achievement unlocked! You reached 500 messages!")
         save_data(players)
 
-    await client.process_commands(message)
 
-@client.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send("Wrong command! To get help check the !help command")
-    elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"You forgot an argument for {ctx.command.name}, use: !{ctx.command.name} {ctx.command.usage}")
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send(f"Wrong argument for command {ctx.command.name}, use: !{ctx.command.name} {ctx.command.usage}")
+@client.tree.error
+async def on_app_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+    logger.error(error, exc_info=True)
+    if interaction.response.is_done():
+        await interaction.followup.send("Something went wrong!")
     else:
-        logger.error(error, exc_info=True)
-        await ctx.send("Something went wrong!")
+        await interaction.response.send_message("Something went wrong!")
+
 
 client.run(DISCORD_TOKEN, log_handler=None)

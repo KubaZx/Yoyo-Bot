@@ -23,7 +23,7 @@ Discord bot with a leveling system, custom currency, games and AI integration.
 
 3. In the same Bot tab, scroll down to Privileged Gateway Intents and enable Message Content Intent. Without it the bot won't be able to read messages.
 
-4. Next go to OAuth2 Tab, check the `bot` scope, then below in Bot Permissions select:
+4. Next go to OAuth2 Tab, check the `bot` and `applications.commands` scopes, then below in Bot Permissions select:
    - Send messages ✅ 
    - Send Messages in Threads ✅ 
    - Read Message History ✅ 
@@ -61,46 +61,46 @@ python bot.py
 ### Profile
 | Command         | Description |
 |-----------------|-------------|
-| `!profile`      |show your level, XP and money|
-| `!top`          | ranking of players|
-| `!stats`        | list of statistics for this server|
-| `!achievements` | list of your unlocked achievements|
-| `!card`         | work in progress|
+| `/profile`      |show your level, XP and money|
+| `/top`          | ranking of players|
+| `/stats`        | list of statistics for this server|
+| `/achievements` | list of your unlocked achievements|
+| `/card`         | work in progress|
 
 ### Economy
 | Command | Description                                                               |
 |---------|---------------------------------------------------------------------------|
-| `!daily`| you can claim 100 Money once per day                                      |
-| `!give` | you can transfer money to the other person, for example: !give @Jason 100 |
-| `!roulette` | you can play roulette (red, green, black), for example !roulette red 20|
-| `!steal` |  you can steal money from another player, your chance is 50%, for example !steal @Jason|
-| `!challenge` | bet money against another player, for example: !challenge @Jason 100|
-| `!accept` | accept a pending challenge|
-| `!decline` | decline a pending challenge|
+| `/daily`| you can claim 100 Money once per day                                      |
+| `/give` | you can transfer money to the other person, for example: /give @Jason 100 |
+| `/roulette` | you can play roulette (red, green, black), for example /roulette red 20|
+| `/steal` |  you can steal money from another player, your chance is 50%, for example /steal @Jason|
+| `/challenge` | bet money against another player, for example: /challenge @Jason 100|
+| `/accept` | accept a pending challenge|
+| `/decline` | decline a pending challenge|
 
 ### Games
 | Command | Description|
 |---------|------------|
-| `!dice` | you can roll a random number 1-6 or you can pick different numbers, for example: !dice 100|
-| `!coinflip` | you can flip a coin|
-| `!rps` | a game for rock, scissors and paper, for example: !rps paper|
-| `!choose` |  bot is choosing instead of you, he has options (yes/maybe/no)|
+| `/dice` | you can roll a random number 1-6 or you can pick different numbers, for example: /dice 100|
+| `/coinflip` | you can flip a coin|
+| `/rps` | a game for rock, scissors and paper, for example: /rps paper|
+| `/choose` |  bot is choosing instead of you, he has options (yes/maybe/no)|
 
 ### AI
 | Command      | Description                                                                                                                                              |
 |--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `!ai`        | you type !ai and write your question, bot will answer you (basic model)                                                                                  |
-| `!aichannel` | the same as !ai but this time bot reads your channel history and comments on it, for example: !aichannel #games what games should we play? (basic model) |
-| `!aipro`     | the same command as !ai but with pro model                                                                                                               |
-| `!aireset`   | reset AI memory with one command and start a fresh conversation                                                                                          |
+| `/ai`        | you type /ai and write your question, bot will answer you (basic model)                                                                                  |
+| `/aichannel` | the same as /ai but this time bot reads your channel history and comments on it, for example: /aichannel #games what games should we play? (basic model) |
+| `/aipro`     | the same command as /ai but with pro model                                                                                                               |
+| `/aireset`   | reset AI memory with one command and start a fresh conversation                                                                                          |
 
 ### Other
 | Command | Description|
 |---------|------------|
-| `!hello` | bot will welcome you :D|
-| `!ping` | check the actual latency between bot and discord|
-| `!form` | type this command and write your question, bot will start the form|
-| `!help` | type this command to see what you're looking for (help menu)|
+| `/hello` | bot will welcome you :D|
+| `/ping` | check the actual latency between bot and discord|
+| `/form` | type this command and write your question, bot will start the form|
+| `/help` | type this command to see what you're looking for (help menu)|
 
 ## Preview
 ![Help command](screenshots/help.png)
@@ -111,7 +111,7 @@ python bot.py
 - ⬜ Move from JSON to SQLite database
 - ⬜ Dockerfile
 - ⬜ Deploy the bot for 24/7 uptime
-- ⬜ Slash commands
+- ✅ Slash commands
 - ⬜ Add requirements.txt
 - ⬜ Add unit tests for economy logic
 - ✅ Replace print() with proper logging

@@ -13,21 +13,21 @@ class Profile(commands.Cog):
         await interaction.response.send_message("Work in progress 🫡")
 
     # Player profile, showing level; xp ; money
-    @app_commands.command(name='profile',  description='Show your level, XP and money')
+    @app_commands.command(name='profile', description='Show your level, XP and money')
     async def profile(self, interaction: discord.Interaction):
-        person_key = get_person_key(ctx.author.id, ctx.guild.id)
+        person_key = get_person_key(interaction.user.id, interaction.guild.id)
         player_data = players[person_key]
         embed = discord.Embed(title='Player Profile', color=0x00ff00)
         embed.add_field(name='Level', value=player_data['level'], inline=True)
         embed.add_field(name='XP', value=f"{player_data['xp']}/{player_data['level'] * 100}", inline=True)
         embed.add_field(name='Money', value=player_data['money'], inline=True)
-        embed.set_thumbnail(url=ctx.author.display_avatar.url)
+        embed.set_thumbnail(url=interaction.user.display_avatar.url)
         await interaction.response.send_message(embed=embed)
 
     # Profile of achievements
     @app_commands.command(name='achievements', description='Show your unlocked achievements')
     async def achievements(self, interaction: discord.Interaction):
-        person_key = get_person_key(ctx.author.id, ctx.guild.id)
+        person_key = get_person_key(interaction.user.id, interaction.guild.id)
         achievements_data = players[person_key]
         embed = discord.Embed(title='Achievements', color=0x079DFA)
         if achievements_data['achievements']['500_messages']:
@@ -47,7 +47,7 @@ class Profile(commands.Cog):
     # List of top players from server
     @app_commands.command(name='top', description='Show the server ranking')
     async def top(self, interaction: discord.Interaction):
-        server_players = {k: v for k, v in players.items() if k.endswith("_" + str(ctx.guild.id))}
+        server_players = {k: v for k, v in players.items() if k.endswith("_" + str(interaction.guild.id))}
         ranking = sorted(server_players.items(), key=lambda x: (x[1]['level'], x[1]['xp'], x[1]['money']), reverse=True)
         embed = discord.Embed(title='Top players 🏆', color=0xE0D90D)
         for i, (player_id, data) in enumerate(ranking[:10]):
@@ -61,7 +61,7 @@ class Profile(commands.Cog):
     # Check the statistics for the actual server
     @app_commands.command(name='stats', description='Show server statistics')
     async def stats(self, interaction: discord.Interaction):
-        server_players = {k: v for k, v in players.items() if k.endswith("_" + str(ctx.guild.id))}
+        server_players = {k: v for k, v in players.items() if k.endswith("_" + str(interaction.guild.id))}
         if not server_players:
             await interaction.response.send_message("No players on this server yet!")
             return

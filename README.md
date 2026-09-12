@@ -40,7 +40,7 @@ git clone https://github.com/KubaZx/Yoyo-Bot.git
 ```
 2. Install dependencies: 
 ```
-pip install discord.py openai python-dotenv
+pip install -r requirements.txt
 ```
 3. Create a `.env` file and add your tokens:
 ```
@@ -112,7 +112,7 @@ python bot.py
 - ⬜ Dockerfile
 - ⬜ Deploy the bot for 24/7 uptime
 - ✅ Slash commands
-- ⬜ Add requirements.txt
+  ✅ Add requirements.txt
 - ⬜ Add unit tests for economy logic
 - ✅ Replace print() with proper logging
 - ⬜ Player card with Pillow

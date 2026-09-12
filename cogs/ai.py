@@ -38,6 +38,9 @@ class AI(commands.Cog):
                 if collected_text and time.time() - last_edit >= 1:
                     await interaction.edit_original_response(content=collected_text[:2000])
                     last_edit = time.time()
+            if not collected_text:
+                await interaction.edit_original_response(content="AI returned an empty response, try again")
+                return
             first_chunk = collected_text[:2000]
             rest = collected_text[2000:]
             await interaction.edit_original_response(content=first_chunk)
@@ -104,6 +107,9 @@ class AI(commands.Cog):
                 if collected_text and time.time() - last_edit >= 1:
                     await interaction.edit_original_response(content=collected_text[:2000])
                     last_edit = time.time()
+            if not collected_text:
+                await interaction.edit_original_response(content="AI returned an empty response, try again")
+                return
             first_chunk = collected_text[:2000]
             rest = collected_text[2000:]
             await interaction.edit_original_response(content=first_chunk)

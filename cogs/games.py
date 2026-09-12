@@ -1,17 +1,19 @@
+import discord
 import random
 from discord.ext import commands
+from discord import app_commands
 
 class Games(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     # Roll a random number
-    @commands.command(name='dice', usage='10')
-    async def dice(self, ctx, sides: int = 6):
+    @app_commands.command(name='dice', description='Roll a dice')
+    async def dice(self, interaction: discord.Interaction, sides: int = 6):
         if sides < 2:
-            await ctx.send("A dice needs at least 2 sides!")
+            await interaction.response.send_message("A dice needs at least 2 sides!")
             return
-        await ctx.send(f"You rolled {random.randint(1, sides)}!")
+        await interaction.response.send_message(f"You rolled {random.randint(1, sides)}!")
 
     # Coinflip - 50/50
     @commands.command(name='coinflip')

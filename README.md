@@ -59,13 +59,13 @@ python bot.py
 
 ## Commands
 ### Profile
-| Command         | Description |
-|-----------------|-------------|
-| `/profile`      |show your level, XP and money|
-| `/top`          | ranking of players|
-| `/stats`        | list of statistics for this server|
-| `/achievements` | list of your unlocked achievements|
-| `/card`         | work in progress|
+| Command         | Description                               |
+|-----------------|-------------------------------------------|
+| `/profile`      | show your level, XP and money             |
+| `/top`          | ranking of players                        |
+| `/stats`        | list of statistics for this server        |
+| `/achievements` | list of your unlocked achievements        |
+| `/card`         | player card with avatar, XP bar and stats |
 
 ### Economy
 | Command | Description                                                               |

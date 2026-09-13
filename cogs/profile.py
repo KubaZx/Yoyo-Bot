@@ -9,8 +9,8 @@ class Profile(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # TODO: Showing player card with pillow:
-    @app_commands.command(name='card', description='Show your profile card (work in progress)')
+    # Player card with avatar, XP bar and stats:
+    @app_commands.command(name='card', description='Show your profile card')
     async def card(self, interaction: discord.Interaction):
         image = Image.new('RGB', (520, 260), (30, 31, 34))
         font_bold = ImageFont.truetype('assets/arialbd.ttf', 28)
@@ -18,8 +18,14 @@ class Profile(commands.Cog):
         draw = ImageDraw.Draw(image)
         person_key = get_person_key(interaction.user.id, interaction.guild.id)
         player_data = players[person_key]
-        draw.text((30, 30), interaction.user.display_name, fill=(255, 255, 255), font=font_bold)
-        draw.text((30, 70), f"Level {player_data['level']}", fill=(150, 150, 150), font=font_regular)
+        avatar_bytes = await interaction.user.display_avatar.read()
+        avatar = Image.open(io.BytesIO(avatar_bytes)).convert('RGB').resize((72, 72))
+        mask = Image.new('L', (72, 72), 0)
+        mask_draw = ImageDraw.Draw(mask)
+        mask_draw.ellipse([(0, 0), (72, 72)], fill=255)
+        image.paste(avatar, (30, 30), mask)
+        draw.text((120, 30), interaction.user.display_name, fill=(255, 255, 255), font=font_bold)
+        draw.text((120, 70), f"Level {player_data['level']}", fill=(150, 150, 150), font=font_regular)
         draw.text((30, 120), "XP", fill=(150, 150, 150), font=font_regular)
         draw.text((400, 120), f"{player_data['xp']} / {player_data['level'] * 100}", fill=(150, 150, 150), font=font_regular)
         progress = player_data['xp'] / (player_data['level'] * 100)

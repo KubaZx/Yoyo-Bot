@@ -1,4 +1,6 @@
 import discord
+import io
+from PIL import Image, ImageDraw
 from discord.ext import commands
 from utils.data import players, get_person_key
 from discord import app_commands
@@ -10,7 +12,14 @@ class Profile(commands.Cog):
     # TODO: Showing player card with pillow:
     @app_commands.command(name='card', description='Show your profile card (work in progress)')
     async def card(self, interaction: discord.Interaction):
-        await interaction.response.send_message("Work in progress 🫡")
+        image = Image.new('RGB', (520, 260), (30, 31, 34))
+        draw = ImageDraw.Draw(image)
+        draw.text((30, 30), interaction.user.display_name, fill=(255, 255, 255))
+        buffer = io.BytesIO()
+        image.save(buffer, format='PNG')
+        buffer.seek(0)
+        file = discord.File(buffer, filename='card.png')
+        await interaction.response.send_message(file=file)
 
     # Player profile, showing level; xp ; money
     @app_commands.command(name='profile', description='Show your level, XP and money')

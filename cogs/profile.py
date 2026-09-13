@@ -1,6 +1,6 @@
 import discord
 import io
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
 from utils.data import players, get_person_key
 from discord import app_commands
@@ -13,8 +13,21 @@ class Profile(commands.Cog):
     @app_commands.command(name='card', description='Show your profile card (work in progress)')
     async def card(self, interaction: discord.Interaction):
         image = Image.new('RGB', (520, 260), (30, 31, 34))
+        font_bold = ImageFont.truetype('assets/arialbd.ttf', 28)
+        font_regular = ImageFont.truetype('assets/arial.ttf', 16)
         draw = ImageDraw.Draw(image)
-        draw.text((30, 30), interaction.user.display_name, fill=(255, 255, 255))
+        person_key = get_person_key(interaction.user.id, interaction.guild.id)
+        player_data = players[person_key]
+        draw.text((30, 30), interaction.user.display_name, fill=(255, 255, 255), font=font_bold)
+        draw.text((30, 70), f"Level {player_data['level']}", fill=(150, 150, 150), font=font_regular)
+        draw.text((30, 120), "XP", fill=(150, 150, 150), font=font_regular)
+        draw.text((400, 120), f"{player_data['xp']} / {player_data['level'] * 100}", fill=(150, 150, 150), font=font_regular)
+        draw.text((30, 190), "Money", fill=(150, 150, 150), font=font_regular)
+        draw.text((30, 210), str(player_data['money']), fill=(255, 255, 255), font=font_bold)
+        draw.text((200, 190), "Messages", fill=(150, 150, 150), font=font_regular)
+        draw.text((200, 210), f"{player_data['total_messages']}", fill=(255, 255, 255), font=font_bold)
+        draw.text((370, 190), "Achievements", fill=(150, 150, 150), font=font_regular)
+        draw.text((370, 210), f"{sum(player_data['achievements'].values())} / 3", fill=(255, 255, 255), font=font_bold)
         buffer = io.BytesIO()
         image.save(buffer, format='PNG')
         buffer.seek(0)

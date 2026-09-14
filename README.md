@@ -112,7 +112,7 @@ python bot.py
 - ⬜ Dockerfile
 - ⬜ Deploy the bot for 24/7 uptime
 - ✅ Slash commands
-  ✅ Add requirements.txt
+- ✅ Add requirements.txt
 - ⬜ Add unit tests for economy logic
 - ✅ Replace print() with proper logging
 - ✅ Player card with Pillow

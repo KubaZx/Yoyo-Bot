@@ -85,7 +85,10 @@ class Economy(commands.Cog):
             return
         result = random.choices(['red', 'black', 'green'], weights=[47.5, 47.5, 5])[0]
         if result == color:
-            players[person_key]['money'] += amount * 2
+            if color == 'green':
+                players[person_key]['money'] += amount * 14
+            else:
+                players[person_key]['money'] += amount
             await interaction.response.send_message(f"{interaction.user.mention} The color is {result}. You won! 💰")
             save_data(players)
         else:

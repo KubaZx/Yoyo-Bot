@@ -15,4 +15,10 @@ def get_person_key(user_id, guild_id):
     return f"{user_id}_{guild_id}"
 
 players = load_data()
-DEFAULT_PROFILE = {'xp': 0, 'level': 1, 'money': 0, 'last_daily': 0, 'messages': 0, 'total_messages': 0, 'achievements': {'500_messages': False, 'level_5': False, '500_money': False}, 'ai_memory': []}
+DEFAULT_PROFILE = {'xp': 0, 'level': 1, 'money': 0, 'last_daily': 0, 'messages': 0, 'total_messages': 0, 'achievements': {'500_messages': False, 'level_5': False, '500_money': False}, 'ai_memory': [], 'inventory': [], 'active_title': None, 'boost_until': 0, 'protected_until': 0}
+SHOP_ITEMS = {
+    'title_pro': {'name': 'Pro title', 'price': 1000, 'type': 'title', 'value': 'Pro'},
+    'xp_boost': {'name': 'XP boost (1h)', 'price': 500, 'type': 'boost', 'value': 3600},
+    'protection': {'name': 'Protection from steal (6h)', 'price': 300, 'type': 'protection', 'value': 21600},
+    'role': {'name': 'Special role', 'price': 1000, 'type': 'role'}
+}

@@ -25,6 +25,7 @@ async def on_ready():
     await client.load_extension('cogs.economy')
     await client.load_extension('cogs.misc')
     await client.load_extension('cogs.ai')
+    await client.load_extension('cogs.shop')
     synced = await client.tree.sync()
     logger.info(f'Synced {len(synced)} slash commands')
     logger.info(f'Bot is running as {client.user}')

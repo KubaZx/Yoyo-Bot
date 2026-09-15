@@ -1,3 +1,4 @@
+import time
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -30,7 +31,13 @@ class Shop(commands.Cog):
             await interaction.response.send_message("You already bought it!")
             return
         player_data['money'] -= SHOP_ITEMS[item]['price']
-        player_data['inventory'].append(item)
+        item_type = SHOP_ITEMS[item]['type']
+        if item_type == 'boost':
+            player_data['boost_until'] = time.time() + SHOP_ITEMS[item]['value']
+        elif item_type == 'protection':
+            player_data['protected_until'] = time.time() + SHOP_ITEMS[item]['value']
+        else:
+            player_data['inventory'].append(item)
         await interaction.response.send_message(f"Nice! You bought {SHOP_ITEMS[item]['name']}")
         save_data(players)
 

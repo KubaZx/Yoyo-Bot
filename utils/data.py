@@ -20,5 +20,5 @@ SHOP_ITEMS = {
     'title_pro': {'name': 'Pro title', 'price': 1000, 'type': 'title', 'value': 'Pro', 'description': 'Gives you a premium title on the server'},
     'xp_boost': {'name': 'XP boost (1h)', 'price': 500, 'type': 'boost', 'value': 3600, 'cooldown': 86400, 'description': 'Doubles your XP gain for one hour'},
     'protection': {'name': 'Protection from steal (6h)', 'price': 300, 'type': 'protection', 'value': 21600, 'cooldown': 259200, 'description': 'Protects you from being robbed'},
-    'role': {'name': 'Special role', 'price': 1000, 'type': 'role', 'description': 'Gives you a special role'}
+    'role': {'name': 'Special role', 'price': 1000, 'type': 'role', 'value': 'Pro', 'description': 'Gives you a special role'}
 }

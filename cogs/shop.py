@@ -52,6 +52,21 @@ class Shop(commands.Cog):
         await interaction.response.send_message(f"Nice! You bought {SHOP_ITEMS[item]['name']}!")
         save_data(players)
 
+    # Equip a title
+    @app_commands.command(name='equip', description='Equip a title you own')
+    @app_commands.choices(title=[
+        app_commands.Choice(name='Pro title', value='title_pro')
+
+    ])
+    async def equip(self, interaction: discord.Interaction, title: str):
+        person_key = get_person_key(interaction.user.id, interaction.guild.id)
+        player_data = players[person_key]
+        if title not in player_data['inventory']:
+            await interaction.response.send_message("You don't own this")
+            return
+        player_data['active_title'] = SHOP_ITEMS[title]['value']
+        save_data(players)
+        await interaction.response.send_message(f"You equipped {SHOP_ITEMS[title]['name']}!")
 
 async def setup(bot):
     await bot.add_cog(Shop(bot))

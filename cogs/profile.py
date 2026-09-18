@@ -25,7 +25,9 @@ class Profile(commands.Cog):
         mask_draw.ellipse([(0, 0), (72, 72)], fill=255)
         image.paste(avatar, (30, 30), mask)
         draw.text((120, 30), interaction.user.display_name, fill=(255, 255, 255), font=font_bold)
-        draw.text((120, 70), f"Level {player_data['level']}", fill=(150, 150, 150), font=font_regular)
+        if player_data['active_title'] is not None:
+            draw.text((120, 67), f"{player_data['active_title']}", fill=(255, 200, 50), font=font_regular)
+        draw.text((120, 85), f"Level {player_data['level']}", fill=(150, 150, 150), font=font_regular)
         draw.text((30, 120), "XP", fill=(150, 150, 150), font=font_regular)
         draw.text((400, 120), f"{player_data['xp']} / {player_data['level'] * 100}", fill=(150, 150, 150), font=font_regular)
         progress = player_data['xp'] / (player_data['level'] * 100)

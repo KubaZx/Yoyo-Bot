@@ -7,6 +7,7 @@ Discord bot with a leveling system, custom currency, games and AI integration.
 - 📈 **Leveling system** - XP for every message, rewards on level up
 - 💰 **Economy system** - currency earned through activity and daily rewards, spent on games and transfers between players
 - 🎮 **Games** - dice, coinflip, rock-paper-scissors, roulette
+- 🛒 **Shop** - Buy titles, XP boost, protection, roles
 - 🤖 **AI** - DeepSeek, two models, conversation memory, channel context
 - 🏆 **Achievements** - three achievements to unlock
 
@@ -15,6 +16,7 @@ Discord bot with a leveling system, custom currency, games and AI integration.
 - discord.py
 - openai
 - python-dotenv
+- pillow
 
 ## Discord bot setup
 1. Create account on [Discord Developer Portal](https://discord.com/developers/home), then create a new application
@@ -28,6 +30,7 @@ Discord bot with a leveling system, custom currency, games and AI integration.
    - Send Messages in Threads ✅ 
    - Read Message History ✅ 
    - Add Reactions ✅
+   - Manage Roles ✅
 
 5. Copy the generated URL at the bottom of the page, open it in a new tab and add the bot to your server
 
@@ -86,6 +89,13 @@ python bot.py
 | `/rps` | a game for rock, scissors and paper, for example: /rps paper|
 | `/choose` |  bot is choosing instead of you, he has options (yes/maybe/no)|
 
+### Shop
+| Command  | Description                                                    |
+|----------|----------------------------------------------------------------|
+| `/shop`  | browse items you can buy with your money                       |
+| `/buy`   | buy an item from the shop (titles, XP boost, protection, role) |
+| `/equip` | equip a title you own, it will show on your card               |
+
 ### AI
 | Command      | Description                                                                                                                                              |
 |--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -116,7 +126,7 @@ python bot.py
 - ⬜ Add unit tests for economy logic
 - ✅ Replace print() with proper logging
 - ✅ Player card with Pillow
-- ⬜ Shop with roles, titles and double XP boosts
+- ✅ Shop with roles, titles and double XP boosts
 - ⬜ Function calling/tool use for AI
 - ⬜ Rate limit for AI commands
 

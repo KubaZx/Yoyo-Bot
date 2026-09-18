@@ -58,6 +58,9 @@ class Economy(commands.Cog):
         if target_key not in players:
             await interaction.response.send_message("This person is not in the database!")
             return
+        if time.time() < players[target_key]['protected_until']:
+            await interaction.response.send_message(f"{target.display_name} has activated protection!")
+            return
         if players[person_key]['money'] <= 0 or players[target_key]['money'] <= 0:
             await interaction.response.send_message("You or the other person doesn't have enough money!")
             return

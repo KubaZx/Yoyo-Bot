@@ -2,12 +2,7 @@ import time
 import discord
 from discord import app_commands
 from discord.ext import commands
-from discord.ext.commands import cooldown
-
-from utils.data import get_person_key, players, save_data, SHOP_ITEMS, DEFAULT_PROFILE
-from typing import Literal
-
-from utils.data import SHOP_ITEMS
+from utils.data import get_person_key, players, save_data, SHOP_ITEMS
 
 class Shop(commands.Cog):
     def __init__(self, bot):
@@ -23,7 +18,13 @@ class Shop(commands.Cog):
 
     # buy items from shop
     @app_commands.command(name='buy', description='Buy items from the shop')
-    async def buy(self, interaction: discord.Interaction, item: Literal['title_pro', 'xp_boost', 'protection', 'role']):
+    @app_commands.choices(item=[
+        app_commands.Choice(name='Pro title', value='title_pro'),
+        app_commands.Choice(name='XP boost (1h)', value='xp_boost'),
+        app_commands.Choice(name='Protection from steal (6h)', value='protection'),
+        app_commands.Choice(name='Special role', value='role')
+    ])
+    async def buy(self, interaction: discord.Interaction, item: str):
         person_key = get_person_key(interaction.user.id, interaction.guild.id)
         player_data = players[person_key]
         item_type = SHOP_ITEMS[item]['type']

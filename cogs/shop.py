@@ -48,11 +48,16 @@ class Shop(commands.Cog):
             player_data['protected_until'] = time.time() + SHOP_ITEMS[item]['value']
             player_data['protection_last_bought'] = time.time()
         elif item_type == 'role':
-            role = discord.utils.get(interaction.guild.roles, name=SHOP_ITEMS[item]['value'])
-            if role is None:
-                role = await interaction.guild.create_role(name=SHOP_ITEMS[item]['value'], color=discord.Color.gold())
-            await interaction.user.add_roles(role)
-            player_data['inventory'].append(item)
+            try:
+                role = discord.utils.get(interaction.guild.roles, name=SHOP_ITEMS[item]['value'])
+                if role is None:
+                    role = await interaction.guild.create_role(name=SHOP_ITEMS[item]['value'],color=discord.Color.gold())
+                await interaction.user.add_roles(role)
+                player_data['inventory'].append(item)
+            except discord.Forbidden:
+                player_data['money'] += SHOP_ITEMS[item]['price']
+                await interaction.response.send_message("Bot doesn't have permission to create a role!")
+                return
         else:
             player_data['inventory'].append(item)
         await interaction.response.send_message(f"Nice! You bought {SHOP_ITEMS[item]['name']}!")

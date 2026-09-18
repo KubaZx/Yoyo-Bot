@@ -1,3 +1,4 @@
+import time
 import discord
 from discord.ext import commands
 import os
@@ -51,7 +52,10 @@ async def on_message(message):
     for key, value in DEFAULT_PROFILE.items():
         if key not in players[person_key]:
             players[person_key][key] = copy.deepcopy(value)
-    players[person_key]['xp'] += 1
+    xp_gain = 1
+    if time.time() < players[person_key]['boost_until']:
+        xp_gain = 2
+    players[person_key]['xp'] += xp_gain
     if players[person_key]['xp'] >= players[person_key]['level'] * 100:
         players[person_key]['xp'] = 0
         players[person_key]['level'] += 1

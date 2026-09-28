@@ -20,12 +20,15 @@ class AI(commands.Cog):
         now = time.time()
         timestamps = self.ai_usage.get(user_id, [])
         timestamps = [t for t in timestamps if now - t < AI_RATE_WINDOW]
-        if len(timestamps) >= AI_CALL_LIMIT:
-            self.ai_usage[user_id] = timestamps
-            return True
+        self.ai_usage[user_id] = timestamps
+        return len(timestamps) >= AI_CALL_LIMIT
+
+    #Record a successful AI call for the rate limit
+    def record_ai_usage(self, user_id):
+        now = time.time()
+        timestamps = self.ai_usage.get(user_id, [])
         timestamps.append(now)
         self.ai_usage[user_id] = timestamps
-        return False
 
     #The same logic to run both ai/aipro commands
     async def run_ai(self, interaction: discord.Interaction, question, model, max_tokens):
@@ -72,6 +75,7 @@ class AI(commands.Cog):
             ai_memory.append({"role": "user", "content": question})
             ai_memory.append({"role": "assistant", "content": collected_text})
             save_data(players)
+            self.record_ai_usage(interaction.user.id)
         except Exception as e:
             logger.error(e, exc_info=True)
             await interaction.edit_original_response(content="Something went wrong with AI, try again in a moment 🥴"[:2000])
@@ -140,6 +144,8 @@ class AI(commands.Cog):
                 piece = rest[:2000]
                 await interaction.followup.send(piece)
                 rest = rest[2000:]
+            self.record_ai_usage(interaction.user.id)
+
         except Exception as e:
             logger.error(e, exc_info=True)
             await interaction.edit_original_response(content="Something went wrong with AI, try again in a moment 🥴"[:2000])

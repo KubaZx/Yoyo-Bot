@@ -2,7 +2,7 @@ import time
 import discord
 import logging
 from discord.ext import commands
-from utils.data import players, save_data, get_person_key
+from utils.data import players, save_data, get_person_key, get_guild_settings
 from utils.ai_client import openai_client
 from discord import app_commands
 
@@ -33,7 +33,7 @@ class AI(commands.Cog):
     #The same logic to run both ai/aipro commands
     async def run_ai(self, interaction: discord.Interaction, question, model, max_tokens):
         person_key = get_person_key(interaction.user.id, interaction.guild.id)
-        if self.is_rate_limited(interaction.user.id):
+        if get_guild_settings(interaction.guild.id)['ai_rate_limit'] and self.is_rate_limited(interaction.user.id):
             await interaction.response.send_message(f"You've run out of {AI_CALL_LIMIT} AI messages! Try again in {AI_RATE_WINDOW // 60} minutes!")
             return
         await interaction.response.defer()
@@ -103,7 +103,7 @@ class AI(commands.Cog):
     # AI with channel context - read 50 messages from the given channel
     @app_commands.command(name='aichannel', description='Chat with the basic AI model about messages on server channel')
     async def aichannel(self, interaction: discord.Interaction, channel: discord.TextChannel, question: str):
-        if self.is_rate_limited(interaction.user.id):
+        if get_guild_settings(interaction.guild.id)['ai_rate_limit'] and self.is_rate_limited(interaction.user.id):
             await interaction.response.send_message(f"You've run out of {AI_CALL_LIMIT} AI messages! Try again in {AI_RATE_WINDOW // 60} minutes!")
             return
         await interaction.response.defer()

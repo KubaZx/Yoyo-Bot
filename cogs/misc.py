@@ -33,6 +33,7 @@ class Misc(commands.Cog):
         embed.add_field(name='SHOP', value="**/shop** - browse items you can buy with your money\n**/buy** - buy an item from the shop (titles, XP boost, protection, role)\n**/equip** - equip a title you own, it will show on your card", inline=False)
         embed.add_field(name='AI', value="**/ai** - You type /ai and write your question, bot will answer you (basic model)\n**/aichannel** - the same as /ai but this time bot reads your channel history and comments on it, for example: /aichannel #games what games should we play? (basic model)\n**/aipro** - the same command as /ai but with pro model\n**/aireset** - reset AI memory with one command and start a fresh conversation", inline=False)
         embed.add_field(name='OTHER', value="**/hello** - bot will welcome you :D\n**/ping** - check the actual latency between bot and discord\n**/form** - type this command and write your question, bot will start the form\n**/help** - type this command to see what you're looking for (help menu)", inline=False)
+        embed.add_field(name='ADMIN', value="**/settings** - turn on/off AI messages limit", inline=False)
         await interaction.response.send_message(embed=embed)
 
 async def setup(bot):

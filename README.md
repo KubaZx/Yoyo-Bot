@@ -56,9 +56,9 @@ python bot.py
 ```
 
 ## Structure
-- `bot.py` - entry point, event handlers, loads cogs
-- `cogs/` - command modules
-- `utils/` - shared data and API client
+- `bot.py` - entry point, event handlers, XP system, loads cogs
+- `cogs/` - command modules: games, profile, economy, shop, AI, misc, settings
+- `utils/` - shared plyer data, server settings, AI client and player card generation
 
 ## Commands
 ### Profile
@@ -111,6 +111,11 @@ python bot.py
 | `/ping` | check the actual latency between bot and discord|
 | `/form` | type this command and write your question, bot will start the form|
 | `/help` | type this command to see what you're looking for (help menu)|
+
+### Admin
+| Command | Description                   |
+|---------|-------------------------------|
+|`/settings` | turn on/off AI messages limit |
 
 ## Preview
 ![Help command](screenshots/help.png)

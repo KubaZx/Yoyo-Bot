@@ -1,5 +1,6 @@
 import json
 import os
+import copy
 
 def load_data():
     if os.path.exists('players.json'):
@@ -32,6 +33,15 @@ def get_guild_settings(guild_id):
         if name not in settings[key]:
             settings[key][name] = value
     return settings[key]
+
+def get_player(user_id, guild_id):
+    person_key = get_person_key(user_id, guild_id)
+    if person_key not in players:
+        players[person_key] = {}
+    for key, value in DEFAULT_PROFILE.items():
+        if key not in players[person_key]:
+            players[person_key][key] = copy.deepcopy(value)
+    return players[person_key]
 
 
 players = load_data()

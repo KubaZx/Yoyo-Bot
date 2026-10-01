@@ -2,10 +2,9 @@ import time
 import discord
 from discord.ext import commands
 import os
-import copy
 import logging
 from dotenv import load_dotenv
-from utils.data import players, DEFAULT_PROFILE, save_data, get_person_key
+from utils.data import players, save_data, get_person_key, get_player
 from discord import app_commands
 
 load_dotenv(dotenv_path='.env')
@@ -47,12 +46,10 @@ async def on_message(message):
 # unique key per user per server
     person_key = get_person_key(message.author.id, message.guild.id)
 
-# create profile and fill in missing fields, then handle XP and level up
-    if person_key not in players:
-        players[person_key] = {}
-    for key, value in DEFAULT_PROFILE.items():
-        if key not in players[person_key]:
-            players[person_key][key] = copy.deepcopy(value)
+# create the player profile if needed and fill in missing fields
+    get_player(message.author.id, message.guild.id)
+
+# handle XP and level up
     xp_gain = 1
     if time.time() < players[person_key]['boost_until']:
         xp_gain = 2

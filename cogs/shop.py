@@ -1,8 +1,9 @@
 import time
 import discord
-from discord import app_commands, Interaction
+from discord import app_commands
 from discord.ext import commands
-from utils.data import get_person_key, players, save_data, SHOP_ITEMS
+from utils.data import players, save_data, SHOP_ITEMS, get_player
+
 
 class Shop(commands.Cog):
     def __init__(self, bot):
@@ -25,8 +26,7 @@ class Shop(commands.Cog):
         app_commands.Choice(name='Special role', value='role')
     ])
     async def buy(self, interaction: discord.Interaction, item: str):
-        person_key = get_person_key(interaction.user.id, interaction.guild.id)
-        player_data = players[person_key]
+        player_data = get_player(interaction.user.id, interaction.guild.id)
         item_type = SHOP_ITEMS[item]['type']
         if player_data['money'] < SHOP_ITEMS[item]['price']:
             await interaction.response.send_message(f"You don't have enough money for {SHOP_ITEMS[item]['name']}!")
@@ -70,8 +70,7 @@ class Shop(commands.Cog):
 
     ])
     async def equip(self, interaction: discord.Interaction, title: str):
-        person_key = get_person_key(interaction.user.id, interaction.guild.id)
-        player_data = players[person_key]
+        player_data = get_player(interaction.user.id, interaction.guild.id)
         if title not in player_data['inventory']:
             await interaction.response.send_message("You don't own this")
             return

@@ -57,16 +57,17 @@ class Economy(commands.Cog):
         if target_key not in players:
             await interaction.response.send_message("This person is not in the database!")
             return
-        if time.time() < players[target_key]['protected_until']:
+        target_data = get_player(target.id, interaction.guild.id)
+        if time.time() < target_data['protected_until']:
             await interaction.response.send_message(f"{target.display_name} has activated protection!")
             return
-        if player_data['money'] <= 0 or players[target_key]['money'] <= 0:
+        if player_data['money'] <= 0 or target_data['money'] <= 0:
             await interaction.response.send_message("You or the other person doesn't have enough money!")
             return
-        stolen_money = random.randint(1, players[target_key]['money'])
+        stolen_money = random.randint(1, target_data['money'])
         if random.randint(1, 2) == 1:
             player_data['money'] += stolen_money
-            players[target_key]['money'] -= stolen_money
+            target_data['money'] -= stolen_money
             await interaction.response.send_message(f"You stole {stolen_money} Money 😈")
             save_data(players)
         else:

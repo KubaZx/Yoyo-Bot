@@ -2,7 +2,7 @@ import time
 import discord
 import logging
 from discord.ext import commands
-from utils.data import players, save_data, get_person_key, get_guild_settings
+from utils.data import players, save_data, get_guild_settings, get_player
 from utils.ai_client import openai_client
 from discord import app_commands
 
@@ -32,7 +32,7 @@ class AI(commands.Cog):
 
     #The same logic to run both ai/aipro commands
     async def run_ai(self, interaction: discord.Interaction, question, model, max_tokens):
-        person_key = get_person_key(interaction.user.id, interaction.guild.id)
+        player_data = get_player(interaction.user.id, interaction.guild.id)
         if get_guild_settings(interaction.guild.id)['ai_rate_limit'] and self.is_rate_limited(interaction.user.id):
             await interaction.response.send_message(f"You've run out of {AI_CALL_LIMIT} AI messages! Try again in {AI_RATE_WINDOW // 60} minutes!")
             return
@@ -40,7 +40,7 @@ class AI(commands.Cog):
         if not question:
             await interaction.followup.send("Write your question!")
             return
-        ai_memory = players[person_key]['ai_memory']
+        ai_memory = player_data['ai_memory']
         messages_to_send = ai_memory[-4:]
         messages_to_send.insert(0, {"role": "system", "content": "Answer concisely and stay on topic. Discord has a 2000 character limit, so don't write more than that. You can be casual and use light humor to keep the conversation fun."})
         messages_to_send.append({"role": "user", "content": question})
@@ -84,8 +84,8 @@ class AI(commands.Cog):
     # Clear AI conversation memory
     @app_commands.command(name='aireset', description='reset your AI memory')
     async def aireset(self, interaction: discord.Interaction):
-        person_key = get_person_key(interaction.user.id, interaction.guild.id)
-        ai_memory = players[person_key]['ai_memory']
+        player_data = get_player(interaction.user.id, interaction.guild.id)
+        ai_memory = player_data['ai_memory']
         ai_memory.clear()
         save_data(players)
         await interaction.response.send_message("Your AI memory has been cleared!")

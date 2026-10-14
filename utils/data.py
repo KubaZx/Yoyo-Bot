@@ -49,8 +49,23 @@ def init_db():
         schema = file.read()
     connection.executescript(schema)
 
-connection = sqlite3.connect('yoyo.db')
 
+def get_player_db(user_id, guild_id):
+    row = connection.execute("SELECT * FROM players WHERE user_id = ? AND guild_id = ?",
+                             (user_id, guild_id)
+                             ).fetchone()
+    if row is None:
+        connection.execute(
+            "INSERT INTO players (user_id, guild_id) VALUES(?, ?)",
+            (user_id, guild_id)
+        )
+        connection.commit()
+        row = connection.execute("SELECT * FROM players WHERE user_id = ? AND guild_id = ?",
+                                 (user_id, guild_id)
+                                 ).fetchone()
+    return row
+
+connection = sqlite3.connect('yoyo.db')
 init_db()
 players = load_data()
 settings = load_settings()

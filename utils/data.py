@@ -1,6 +1,7 @@
 import json
 import os
 import copy
+import sqlite3
 
 def load_data():
     if os.path.exists('players.json'):
@@ -43,7 +44,14 @@ def get_player(user_id, guild_id):
             players[person_key][key] = copy.deepcopy(value)
     return players[person_key]
 
+def init_db():
+    with open('schema.sql', 'r', encoding='utf-8') as file:
+        schema = file.read()
+    connection.executescript(schema)
 
+connection = sqlite3.connect('yoyo.db')
+
+init_db()
 players = load_data()
 settings = load_settings()
 DEFAULT_PROFILE = {'xp': 0, 'level': 1, 'money': 0, 'last_daily': 0, 'messages': 0, 'total_messages': 0, 'achievements': {'500_messages': False, 'level_5': False, '500_money': False}, 'ai_memory': [], 'inventory': [], 'active_title': None, 'boost_until': 0, 'protected_until': 0, 'boost_last_bought': 0, 'protection_last_bought': 0}

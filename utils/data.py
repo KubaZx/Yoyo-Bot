@@ -105,6 +105,22 @@ def set_setting(guild_id, setting, enabled):
                        (guild_id, setting, enabled))
     connection.commit()
 
+def add_memory(user_id, guild_id, role, content):
+    connection.execute("INSERT INTO ai_memory (user_id, guild_id, role, content) VALUES (?, ?, ?, ?)",
+                       (user_id, guild_id, role, content))
+    connection.commit()
+
+def get_memory(user_id, guild_id, limit):
+    rows = connection.execute("SELECT role, content FROM ai_memory WHERE user_id = ? AND guild_id = ? ORDER BY message_id DESC LIMIT ?",
+                             (user_id, guild_id, limit)
+                             ).fetchall()
+    return [dict(row) for row in reversed(rows)]
+
+def clear_memory(user_id, guild_id):
+    connection.execute("DELETE FROM ai_memory WHERE user_id = ? AND guild_id = ?",
+                       (user_id, guild_id))
+    connection.commit()
+
 connection = sqlite3.connect('yoyo.db')
 connection.row_factory = sqlite3.Row
 init_db()

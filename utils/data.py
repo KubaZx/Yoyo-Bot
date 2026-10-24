@@ -65,6 +65,11 @@ def get_player_db(user_id, guild_id):
                                  ).fetchone()
     return dict(row)
 
+def save_player(user_id, guild_id, player_data):
+    connection.execute("UPDATE players SET money = ?, xp = ? WHERE user_id = ? AND guild_id = ?",
+                       (player_data['money'], player_data['xp'], user_id, guild_id))
+    connection.commit()
+
 connection = sqlite3.connect('yoyo.db')
 connection.row_factory = sqlite3.Row
 init_db()

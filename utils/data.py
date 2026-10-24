@@ -70,6 +70,17 @@ def save_player(user_id, guild_id, player_data):
                        (player_data['money'], player_data['xp'], player_data['level'], player_data['last_daily'], player_data['messages'], player_data['total_messages'], player_data['active_title'], player_data['boost_until'], player_data['protected_until'], player_data['boost_last_bought'], player_data['protection_last_bought'], user_id, guild_id))
     connection.commit()
 
+def add_item(user_id, guild_id, item_id):
+    connection.execute("INSERT INTO inventory (user_id, guild_id, item_id) VALUES(?, ?, ?)",
+                       (user_id, guild_id, item_id))
+    connection.commit()
+
+def get_inventory(user_id, guild_id):
+    rows = connection.execute("SELECT item_id FROM inventory WHERE user_id = ? AND guild_id = ?",
+                              (user_id, guild_id)
+                       ).fetchall()
+    return [row['item_id'] for row in rows]
+
 connection = sqlite3.connect('yoyo.db')
 connection.row_factory = sqlite3.Row
 init_db()

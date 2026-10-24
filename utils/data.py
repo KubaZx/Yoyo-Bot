@@ -66,8 +66,8 @@ def get_player_db(user_id, guild_id):
     return dict(row)
 
 def save_player(user_id, guild_id, player_data):
-    connection.execute("UPDATE players SET money = ?, xp = ? WHERE user_id = ? AND guild_id = ?",
-                       (player_data['money'], player_data['xp'], user_id, guild_id))
+    connection.execute("UPDATE players SET money = ?, xp = ?, level = ?, last_daily = ?, messages = ?, total_messages = ?, active_title = ?, boost_until = ?, protected_until = ?, boost_last_bought = ?, protection_last_bought = ? WHERE user_id = ? AND guild_id = ?",
+                       (player_data['money'], player_data['xp'], player_data['level'], player_data['last_daily'], player_data['messages'], player_data['total_messages'], player_data['active_title'], player_data['boost_until'], player_data['protected_until'], player_data['boost_last_bought'], player_data['protection_last_bought'], user_id, guild_id))
     connection.commit()
 
 connection = sqlite3.connect('yoyo.db')

@@ -92,6 +92,19 @@ def get_achievements(user_id, guild_id):
                               ).fetchall()
     return [row['achievement'] for row in rows]
 
+def get_setting(guild_id, setting):
+    row = connection.execute("SELECT enabled FROM guild_settings WHERE guild_id = ? AND setting = ?",
+                             (guild_id, setting)
+                             ).fetchone()
+    if row is None:
+        return DEFAULT_SETTINGS[setting]
+    return bool(row['enabled'])
+
+def set_setting(guild_id, setting, enabled):
+    connection.execute("INSERT OR REPLACE INTO guild_settings (guild_id, setting, enabled) VALUES(?, ?, ?)",
+                       (guild_id, setting, enabled))
+    connection.commit()
+
 connection = sqlite3.connect('yoyo.db')
 connection.row_factory = sqlite3.Row
 init_db()

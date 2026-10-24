@@ -63,9 +63,10 @@ def get_player_db(user_id, guild_id):
         row = connection.execute("SELECT * FROM players WHERE user_id = ? AND guild_id = ?",
                                  (user_id, guild_id)
                                  ).fetchone()
-    return row
+    return dict(row)
 
 connection = sqlite3.connect('yoyo.db')
+connection.row_factory = sqlite3.Row
 init_db()
 players = load_data()
 settings = load_settings()

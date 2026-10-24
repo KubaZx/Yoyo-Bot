@@ -81,6 +81,17 @@ def get_inventory(user_id, guild_id):
                        ).fetchall()
     return [row['item_id'] for row in rows]
 
+def unlock_achievement(user_id, guild_id, achievement):
+    connection.execute("INSERT INTO achievements (user_id, guild_id, achievement) VALUES(?, ?, ?)",
+                       (user_id, guild_id, achievement))
+    connection.commit()
+
+def get_achievements(user_id, guild_id):
+    rows = connection.execute("SELECT achievement FROM achievements WHERE user_id = ? AND guild_id = ?",
+                              (user_id, guild_id)
+                              ).fetchall()
+    return [row['achievement'] for row in rows]
+
 connection = sqlite3.connect('yoyo.db')
 connection.row_factory = sqlite3.Row
 init_db()

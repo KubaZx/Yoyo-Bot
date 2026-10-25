@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from utils.card import generate_card
-from utils.data import players, get_player
+from utils.data import players, get_player, get_player_db, get_achievements
 from discord import app_commands
 
 class Profile(commands.Cog):
@@ -11,7 +11,8 @@ class Profile(commands.Cog):
     # Player card with avatar, XP bar and stats:
     @app_commands.command(name='card', description='Show your profile card')
     async def card(self, interaction: discord.Interaction):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
+        player_data['achievements'] = get_achievements(interaction.user.id, interaction.guild.id)
         avatar_bytes = await interaction.user.display_avatar.read()
         buffer = generate_card(player_data, interaction.user.display_name, avatar_bytes)
         file = discord.File(buffer, filename='card.png')
@@ -20,7 +21,7 @@ class Profile(commands.Cog):
     # Player profile, showing level; xp ; money
     @app_commands.command(name='profile', description='Show your level, XP and money')
     async def profile(self, interaction: discord.Interaction):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
         embed = discord.Embed(title='Player Profile', color=0x00ff00)
         embed.add_field(name='Level', value=player_data['level'], inline=True)
         embed.add_field(name='XP', value=f"{player_data['xp']}/{player_data['level'] * 100}", inline=True)

@@ -25,7 +25,7 @@ def generate_card(player_data, display_name, avatar_bytes):
     draw.text((200, 190), "Messages", fill=(150, 150, 150), font=font_regular)
     draw.text((200, 210), f"{player_data['total_messages']}", fill=(255, 255, 255), font=font_bold)
     draw.text((370, 190), "Achievements", fill=(150, 150, 150), font=font_regular)
-    draw.text((370, 210), f"{sum(player_data['achievements'].values())} / 3", fill=(255, 255, 255), font=font_bold)
+    draw.text((370, 210), f"{len(player_data['achievements'])} / 3", fill=(255, 255, 255), font=font_bold)
     buffer = io.BytesIO()
     image.save(buffer, format='PNG')
     buffer.seek(0)

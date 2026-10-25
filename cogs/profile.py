@@ -1,5 +1,7 @@
 import discord
 from discord.ext import commands
+
+from migrate import unlocked
 from utils.card import generate_card
 from utils.data import players, get_player, get_player_db, get_achievements
 from discord import app_commands
@@ -32,17 +34,17 @@ class Profile(commands.Cog):
     # Profile of achievements
     @app_commands.command(name='achievements', description='Show your unlocked achievements')
     async def achievements(self, interaction: discord.Interaction):
-        achievements_data = get_player(interaction.user.id, interaction.guild.id)
+        unlocked = get_achievements(interaction.user.id, interaction.guild.id)
         embed = discord.Embed(title='Achievements', color=0x079DFA)
-        if achievements_data['achievements']['500_messages']:
+        if '500_messages' in unlocked:
             embed.add_field(name='500 messages', value='✅', inline=False)
         else:
             embed.add_field(name='500 messages', value='❌', inline=False)
-        if achievements_data['achievements']['level_5']:
+        if 'level_5' in unlocked:
             embed.add_field(name='Level 5', value='✅', inline=False)
         else:
             embed.add_field(name='Level 5', value='❌', inline=False)
-        if achievements_data['achievements']['500_money']:
+        if '500_money' in unlocked:
             embed.add_field(name='500 money', value='✅', inline=False)
         else:
             embed.add_field(name='500 money', value='❌', inline=False)

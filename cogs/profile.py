@@ -1,7 +1,5 @@
 import discord
 from discord.ext import commands
-
-from migrate import unlocked
 from utils.card import generate_card
 from utils.data import players, get_player, get_player_db, get_achievements
 from discord import app_commands

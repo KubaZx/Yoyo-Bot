@@ -1,7 +1,9 @@
 import discord
 from discord.ext import commands
+
+from utils import data
 from utils.card import generate_card
-from utils.data import players, get_player, get_player_db, get_achievements, get_top_players
+from utils.data import players, get_player, get_player_db, get_achievements, get_top_players, get_server_players
 from discord import app_commands
 
 class Profile(commands.Cog):
@@ -64,18 +66,18 @@ class Profile(commands.Cog):
     # Check the statistics for the actual server
     @app_commands.command(name='stats', description='Show server statistics')
     async def stats(self, interaction: discord.Interaction):
-        server_players = {k: v for k, v in players.items() if k.endswith("_" + str(interaction.guild.id))}
+        server_players = get_server_players(interaction.guild.id)
         if not server_players:
             await interaction.response.send_message("No players on this server yet!")
             return
         player_count = len(server_players)
-        total_money = sum(profile['money'] for profile in server_players.values())
-        total_messages = sum(profile['total_messages'] for profile in server_players.values())
-        richest_person = max(server_players.items(), key=lambda x: x[1]['money'])
+        total_money = sum(profile['money'] for profile in server_players)
+        total_messages = sum(profile['total_messages'] for profile in server_players)
+        richest_person = max(server_players, key=lambda x: x['money'])
         embed = discord.Embed(title='Server Stats 📈', color=0x9B59B6)
         embed.add_field(name='Number of Players 👤', value=player_count, inline=False)
         embed.add_field(name='Amount of Money 💸', value=total_money, inline=False)
-        embed.add_field(name='The Richest Person 👤💸', value=f"<@{richest_person[0].split('_')[0]}> has {richest_person[1]['money']}", inline=False)
+        embed.add_field(name='The Richest Person 👤💸', value=f"<@{richest_person['user_id']}> has {richest_person['money']}", inline=False)
         embed.add_field(name='Number of Messages 📨', value=total_messages, inline=False)
         await interaction.response.send_message(embed=embed)
 

@@ -121,6 +121,12 @@ def clear_memory(user_id, guild_id):
                        (user_id, guild_id))
     connection.commit()
 
+def get_top_players(guild_id, limit):
+    rows = connection.execute("SELECT user_id, level, xp, money FROM players WHERE guild_id = ? ORDER BY level DESC, xp DESC, money DESC LIMIT ?",
+                              (guild_id, limit)
+                              ).fetchall()
+    return [dict(row) for row in rows]
+
 connection = sqlite3.connect('yoyo.db')
 connection.row_factory = sqlite3.Row
 init_db()

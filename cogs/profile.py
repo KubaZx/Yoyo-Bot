@@ -1,7 +1,5 @@
 import discord
 from discord.ext import commands
-
-from migrate import user_id
 from utils.card import generate_card
 from utils.data import players, get_player, get_player_db, get_achievements, get_top_players
 from discord import app_commands

@@ -51,12 +51,12 @@ class Profile(commands.Cog):
     # List of top players from server
     @app_commands.command(name='top', description='Show the server ranking')
     async def top(self, interaction: discord.Interaction):
-        ranking =  get_top_players(interaction.guild.id, 10)
+        ranking = get_top_players(interaction.guild.id, 10)
         embed = discord.Embed(title='Top players 🏆', color=0xE0D90D)
-        for i, (player_id, data) in enumerate(ranking[:10]):
+        for i, data in enumerate(ranking):
             embed.add_field(
                 name=f'{i + 1}. place',
-                value=f'<@{player_id.split("_")[0]}> | Level {data["level"]} | XP: {data["xp"]}/{data["level"] * 100} | Money {data["money"]}',
+                value=f'<@{data["user_id"]}> | Level {data["level"]} | XP: {data["xp"]}/{data["level"] * 100} | Money {data["money"]}',
                 inline=False
             )
         await interaction.response.send_message(embed=embed)

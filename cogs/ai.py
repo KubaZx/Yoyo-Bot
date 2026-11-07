@@ -2,7 +2,7 @@ import time
 import discord
 import logging
 from discord.ext import commands
-from utils.data import players, save_data, get_setting, get_player
+from utils.data import get_setting, clear_memory, get_memory, add_memory
 from utils.ai_client import openai_client
 from discord import app_commands
 
@@ -32,7 +32,6 @@ class AI(commands.Cog):
 
     #The same logic to run both ai/aipro commands
     async def run_ai(self, interaction: discord.Interaction, question, model, max_tokens):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
         if get_setting(interaction.guild.id, 'ai_rate_limit') and self.is_rate_limited(interaction.user.id):
             await interaction.response.send_message(f"You've run out of {AI_CALL_LIMIT} AI messages! Try again in {AI_RATE_WINDOW // 60} minutes!")
             return
@@ -40,8 +39,7 @@ class AI(commands.Cog):
         if not question:
             await interaction.followup.send("Write your question!")
             return
-        ai_memory = player_data['ai_memory']
-        messages_to_send = ai_memory[-4:]
+        messages_to_send = get_memory(interaction.user.id, interaction.guild.id, 4)
         messages_to_send.insert(0, {"role": "system", "content": "Answer concisely and stay on topic. Discord has a 2000 character limit, so don't write more than that. You can be casual and use light humor to keep the conversation fun."})
         messages_to_send.append({"role": "user", "content": question})
         try:
@@ -72,9 +70,8 @@ class AI(commands.Cog):
                 await interaction.followup.send(piece)
                 rest = rest[2000:]
 
-            ai_memory.append({"role": "user", "content": question})
-            ai_memory.append({"role": "assistant", "content": collected_text})
-            save_data(players)
+            add_memory(interaction.user.id, interaction.guild.id, "user", question)
+            add_memory(interaction.user.id, interaction.guild.id, "assistant", collected_text)
             self.record_ai_usage(interaction.user.id)
         except Exception as e:
             logger.error(e, exc_info=True)
@@ -84,16 +81,13 @@ class AI(commands.Cog):
     # Clear AI conversation memory
     @app_commands.command(name='aireset', description='reset your AI memory')
     async def aireset(self, interaction: discord.Interaction):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
-        ai_memory = player_data['ai_memory']
-        ai_memory.clear()
-        save_data(players)
+        clear_memory(interaction.user.id, interaction.guild.id)
         await interaction.response.send_message("Your AI memory has been cleared!")
 
     # AI using the basic model
     @app_commands.command(name='ai', description='chat with the basic AI model')
     async def ai(self, interaction: discord.Interaction, question: str):
-        await self.run_ai(interaction, question, "deepseek-v4-flash", 2000)
+        await self.run_ai(interaction, question, "deepseek-flash", 2000)
 
     # AI using the pro model
     @app_commands.command(name='aipro', description='chat with the pro AI model')
@@ -118,7 +112,7 @@ class AI(commands.Cog):
             last_edit = time.time()
 
             response = await openai_client.chat.completions.create(
-                model="deepseek-v4-flash",
+                model="deepseek-flash",
                 messages=[
                     {"role": "system", "content": context},
                     {"role": "user", "content": question}

@@ -2,7 +2,7 @@ import time
 import discord
 from discord import app_commands
 from discord.ext import commands
-from utils.data import players, save_data, SHOP_ITEMS, get_player
+from utils.data import SHOP_ITEMS, get_player_db, get_inventory, add_item, save_player
 
 
 class Shop(commands.Cog):
@@ -26,12 +26,13 @@ class Shop(commands.Cog):
         app_commands.Choice(name='Special role', value='role')
     ])
     async def buy(self, interaction: discord.Interaction, item: str):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
         item_type = SHOP_ITEMS[item]['type']
         if player_data['money'] < SHOP_ITEMS[item]['price']:
             await interaction.response.send_message(f"You don't have enough money for {SHOP_ITEMS[item]['name']}!")
             return
-        if item in player_data['inventory']:
+        inventory = get_inventory(interaction.user.id, interaction.guild.id)
+        if item in inventory:
             await interaction.response.send_message(f"You already bought {SHOP_ITEMS[item]['name']}!")
             return
         if item_type == 'boost' and time.time() - player_data['boost_last_bought'] < SHOP_ITEMS[item]['cooldown']:
@@ -53,15 +54,15 @@ class Shop(commands.Cog):
                 if role is None:
                     role = await interaction.guild.create_role(name=SHOP_ITEMS[item]['value'],color=discord.Color.gold())
                 await interaction.user.add_roles(role)
-                player_data['inventory'].append(item)
+                add_item(interaction.user.id, interaction.guild.id, item)
             except discord.Forbidden:
                 player_data['money'] += SHOP_ITEMS[item]['price']
                 await interaction.response.send_message("Bot doesn't have permission to create a role!")
                 return
         else:
-            player_data['inventory'].append(item)
+            add_item(interaction.user.id, interaction.guild.id, item)
         await interaction.response.send_message(f"Nice! You bought {SHOP_ITEMS[item]['name']}!")
-        save_data(players)
+        save_player(interaction.user.id, interaction.guild.id, player_data)
 
     # Equip a title
     @app_commands.command(name='equip', description='Equip a title you own')
@@ -70,12 +71,13 @@ class Shop(commands.Cog):
 
     ])
     async def equip(self, interaction: discord.Interaction, title: str):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
-        if title not in player_data['inventory']:
+        inventory = get_inventory(interaction.user.id, interaction.guild.id)
+        if title not in inventory:
             await interaction.response.send_message("You don't own this")
             return
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
         player_data['active_title'] = SHOP_ITEMS[title]['value']
-        save_data(players)
+        save_player(interaction.user.id, interaction.guild.id, player_data)
         await interaction.response.send_message(f"You equipped {SHOP_ITEMS[title]['name']}!")
 
 async def setup(bot):

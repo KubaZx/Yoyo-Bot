@@ -2,7 +2,7 @@ import discord
 import time
 import random
 from discord.ext import commands
-from utils.data import players, save_data, get_person_key, get_player
+from utils.data import players, save_data, get_person_key, get_player_db, save_player
 from discord import app_commands
 from typing import Literal
 
@@ -15,49 +15,49 @@ class Economy(commands.Cog):
     # daily money, once per day
     @app_commands.command(name='daily', description='Claim daily money')
     async def daily(self, interaction: discord.Interaction):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
         if time.time() - player_data['last_daily'] >= 86400:
             player_data['money'] += 100
             player_data['last_daily'] = time.time()
             await interaction.response.send_message(f"{interaction.user.mention} You claimed 100 Money! 💸")
-            save_data(players)
+            save_player(interaction.user.id, interaction.guild.id, player_data)
         else:
             await interaction.response.send_message("You already claimed your daily bonus today!")
 
     # transfer money to another player
     @app_commands.command(name='give', description='Give money to another person')
     async def give(self, interaction: discord.Interaction, target: discord.Member, amount: int):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
         if amount <= 0:
             await interaction.response.send_message("The amount must be greater than 0!")
             return
         if interaction.user.id == target.id:
             await interaction.response.send_message("You can't give money to yourself!")
             return
-        target_key = f"{target.id}_{interaction.guild.id}"
-        if target_key not in players:
-            await interaction.response.send_message("This person is not in the database!")
+        if target.bot:
+            await interaction.response.send_message("You can't give money to a bot!")
             return
         if player_data['money'] < amount:
             await interaction.response.send_message("You don't have enough money!")
             return
+        target_data = get_player_db(target.id, interaction.guild.id)
         player_data['money'] -= amount
-        players[target_key]['money'] += amount
-        save_data(players)
+        target_data['money'] += amount
+        save_player(interaction.user.id, interaction.guild.id, player_data)
+        save_player(target.id, interaction.guild.id, target_data)
         await interaction.response.send_message(f"Nice! You have transferred {amount} money to {target.mention}")
 
     # steal money from another player - 50% chance
     @app_commands.command(name='steal', description='Steal money from other person')
     async def steal(self, interaction: discord.Interaction, target: discord.Member):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
-        target_key = f"{target.id}_{interaction.guild.id}"
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
         if interaction.user.id == target.id:
             await interaction.response.send_message("You can't steal from yourself")
             return
-        if target_key not in players:
-            await interaction.response.send_message("This person is not in the database!")
+        if target.bot:
+            await interaction.response.send_message("You can't steal money from a bot!")
             return
-        target_data = get_player(target.id, interaction.guild.id)
+        target_data = get_player_db(target.id, interaction.guild.id)
         if time.time() < target_data['protected_until']:
             await interaction.response.send_message(f"{target.display_name} has activated protection!")
             return
@@ -69,12 +69,13 @@ class Economy(commands.Cog):
             player_data['money'] += stolen_money
             target_data['money'] -= stolen_money
             await interaction.response.send_message(f"You stole {stolen_money} Money 😈")
-            save_data(players)
+            save_player(interaction.user.id, interaction.guild.id, player_data)
+            save_player(target.id, interaction.guild.id, target_data)
         else:
             lost = min(player_data['money'], stolen_money)
             player_data['money'] -= lost
             await interaction.response.send_message(f"Not this time, you lost {lost} money 😪")
-            save_data(players)
+            save_player(interaction.user.id, interaction.guild.id, player_data)
 
     # roulette system
     @app_commands.command(name='roulette', description='Play roulette and try to win money')

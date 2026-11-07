@@ -1,7 +1,7 @@
 from discord import app_commands
 from discord.ext import commands
 import discord
-from utils.data import get_guild_settings, save_settings, settings
+from utils.data import set_setting
 
 
 class Settings(commands.Cog):
@@ -16,9 +16,7 @@ class Settings(commands.Cog):
         if not interaction.user.guild_permissions.administrator:
             await interaction.response.send_message("You don't have permission to change this setting!")
             return
-        guild_settings = get_guild_settings(interaction.guild.id)
-        guild_settings[setting.value] = enabled
-        save_settings(settings)
+        set_setting(interaction.guild.id, setting.value, enabled)
         await interaction.response.send_message(f"The {setting.name} has been changed to {enabled}")
 
 

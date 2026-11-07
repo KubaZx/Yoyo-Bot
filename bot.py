@@ -4,7 +4,7 @@ from discord.ext import commands
 import os
 import logging
 from dotenv import load_dotenv
-from utils.data import players, save_data, get_person_key, get_player
+from utils.data import get_player_db, get_achievements, unlock_achievement, save_player
 from discord import app_commands
 
 load_dotenv(dotenv_path='.env')
@@ -43,46 +43,42 @@ async def on_message(message):
         await message.channel.send("Hey, I only work on servers 😁")
         return
 
-# unique key per user per server
-    person_key = get_person_key(message.author.id, message.guild.id)
+# create the player from the database (creates a new one if needed)
+    player_data = get_player_db(message.author.id, message.guild.id)
 
-# create the player profile if needed and fill in missing fields
-    get_player(message.author.id, message.guild.id)
+# unlocked achievements of player
+    unlocked = get_achievements(message.author.id, message.guild.id)
 
 # handle XP and level up
     xp_gain = 1
-    if time.time() < players[person_key]['boost_until']:
+    if time.time() < player_data['boost_until']:
         xp_gain = 2
-    players[person_key]['xp'] += xp_gain
-    if players[person_key]['xp'] >= players[person_key]['level'] * 100:
-        players[person_key]['xp'] = 0
-        players[person_key]['level'] += 1
-        if players[person_key]['level'] == 5 and not players[person_key]['achievements']['level_5']:
-            players[person_key]['achievements']['level_5'] = True
+    player_data['xp'] += xp_gain
+    if player_data['xp'] >= player_data['level'] * 100:
+        player_data['xp'] = 0
+        player_data['level'] += 1
+        if player_data['level'] == 5 and 'level_5' not in unlocked:
+            unlock_achievement(message.author.id, message.guild.id, 'level_5')
             await message.channel.send("Achievement unlocked! You reached level 5!")
-            save_data(players)
-        players[person_key]['money'] += 100
-        await message.channel.send(f"{message.author.mention} Nice! You reached level {players[person_key]['level']}!")
-    save_data(players)
+        player_data['money'] += 100
+        await message.channel.send(f"{message.author.mention} Nice! You reached level {player_data['level']}!")
 
 # Achievement for reaching 500 money:
-    if players[person_key]['money'] >= 500 and not players[person_key]['achievements']['500_money']:
-        players[person_key]['achievements']['500_money'] = True
+    if player_data['money'] >= 500 and '500_money' not in unlocked:
+        unlock_achievement(message.author.id, message.guild.id, '500_money')
         await message.channel.send("Achievement unlocked! You have reached 500 money!")
-        save_data(players)
 
 # Giving money for messages
-    players[person_key]['messages'] += 1
-    players[person_key]['total_messages'] += 1
-    if players[person_key]['messages'] == 100:
-        players[person_key]['money'] += 100
+    player_data['messages'] += 1
+    player_data['total_messages'] += 1
+    if player_data['messages'] == 100:
+        player_data['money'] += 100
         await message.channel.send("Congratulations, you got 100 money for 100 messages!")
-        players[person_key]['messages'] = 0
-        save_data(players)
-    if players[person_key]['total_messages'] == 500 and not players[person_key]['achievements']['500_messages']:
-        players[person_key]['achievements']['500_messages'] = True
+        player_data['messages'] = 0
+    if player_data['total_messages'] == 500 and '500_messages' not in unlocked:
+        unlock_achievement(message.author.id, message.guild.id, '500_messages')
         await message.channel.send("Achievement unlocked! You reached 500 messages!")
-        save_data(players)
+    save_player(message.author.id, message.guild.id, player_data)
 
 
 @client.tree.error

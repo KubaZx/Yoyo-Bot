@@ -2,7 +2,7 @@ import discord
 import time
 import random
 from discord.ext import commands
-from utils.data import players, save_data, get_person_key, get_player_db, save_player
+from utils.data import get_person_key, get_player_db, save_player
 from discord import app_commands
 from typing import Literal
 
@@ -80,7 +80,7 @@ class Economy(commands.Cog):
     # roulette system
     @app_commands.command(name='roulette', description='Play roulette and try to win money')
     async def roulette(self, interaction: discord.Interaction, color: Literal['red', 'black', 'green'], amount: int):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
         if amount <= 0:
             await interaction.response.send_message("The amount must be greater than 0!")
             return
@@ -94,16 +94,16 @@ class Economy(commands.Cog):
             else:
                 player_data['money'] += amount
             await interaction.response.send_message(f"{interaction.user.mention} The color is {result}. You won! 💰")
-            save_data(players)
+            save_player(interaction.user.id, interaction.guild.id, player_data)
         else:
             await interaction.response.send_message(f"The color is {result}. Not this time 😪")
             player_data['money'] -= amount
-            save_data(players)
+            save_player(interaction.user.id, interaction.guild.id, player_data)
 
     # challenge another person for coinflip
     @app_commands.command(name='challenge', description='challenge someone for coinflip')
     async def challenge(self, interaction: discord.Interaction, target: discord.Member, amount: int):
-        player_data = get_player(interaction.user.id, interaction.guild.id)
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
         person_key = get_person_key(interaction.user.id, interaction.guild.id)
         target_key = f"{target.id}_{interaction.guild.id}"
         if amount <= 0:
@@ -112,8 +112,8 @@ class Economy(commands.Cog):
         if interaction.user.id == target.id:
             await interaction.response.send_message("You can't challenge yourself!")
             return
-        if target_key not in players:
-            await interaction.response.send_message("This person is not in the database!")
+        if target.bot:
+            await interaction.response.send_message("You can't challenge a bot!")
             return
         if target_key in self.pending_bets:
             await interaction.response.send_message("This person already has a pending challenge!")
@@ -121,23 +121,27 @@ class Economy(commands.Cog):
         if player_data['money'] < amount:
             await interaction.response.send_message("You don't have enough money to challenge this person!")
             return
-        if players[target_key]['money'] < amount:
+        target_data = get_player_db(target.id, interaction.guild.id)
+        if target_data['money'] < amount:
             await interaction.response.send_message("The person you want to challenge with doesn't have enough money!")
             return
         self.pending_bets[target_key] = {'challenger': person_key, 'amount': amount}
-        await interaction.response.send_message(f"{target.mention} You've been challenged by {interaction.user.mention} for {amount} Money! Type /accept to take this bet.")
+        await interaction.response.send_message(f"{target.mention} You've been challenged by {interaction.user.mention} for {amount} Money! Type /accept to take this bet or /decline to refuse.")
 
     # accept the challenge
     @app_commands.command(name='accept', description='accept the challenge')
     async def accept(self, interaction: discord.Interaction):
         person_key = get_person_key(interaction.user.id, interaction.guild.id)
-        player_data = get_player(interaction.user.id, interaction.guild.id)
+        player_data = get_player_db(interaction.user.id, interaction.guild.id)
         if person_key not in self.pending_bets:
             await interaction.response.send_message("You don't have any pending challenge!")
             return
         challenger_key = self.pending_bets[person_key]['challenger']
+        parts = challenger_key.split('_')
+        challenger_id = int(parts[0])
         bet_amount = self.pending_bets[person_key]['amount']
-        if players[challenger_key]['money'] < bet_amount:
+        challenger_data = get_player_db(challenger_id, interaction.guild.id)
+        if challenger_data['money'] < bet_amount:
             await interaction.response.send_message("The person who challenged you, doesn't have enough money to start the challenge!")
             del self.pending_bets[person_key]
             return
@@ -149,13 +153,14 @@ class Economy(commands.Cog):
         draw = random.choice([person_key, challenger_key])
         if draw == person_key:
             player_data['money'] += bet_amount
-            players[challenger_key]['money'] -= bet_amount
+            challenger_data['money'] -= bet_amount
             await interaction.response.send_message(f"Congratulations {interaction.user.mention}, you won {bet_amount} Money! 💰")
         else:
-            players[challenger_key]['money'] += bet_amount
+            challenger_data['money'] += bet_amount
             player_data['money'] -= bet_amount
-            await interaction.response.send_message(f"Congratulations <@{challenger_key.split('_')[0]}>, you won {bet_amount} Money! 💰")
-        save_data(players)
+            await interaction.response.send_message(f"Congratulations <@{challenger_id}>, you won {bet_amount} Money! 💰")
+        save_player(interaction.user.id, interaction.guild.id, player_data)
+        save_player(challenger_id, interaction.guild.id, challenger_data)
 
     # decline the challenge
     @app_commands.command(name='decline', description='decline the challenge')

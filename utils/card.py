@@ -1,10 +1,13 @@
 import io
 from PIL import Image, ImageDraw, ImageFont
+from pathlib import Path
+BASE_DIR = Path(__file__).parent.parent
+
 
 def generate_card(player_data, display_name, avatar_bytes):
     image = Image.new('RGB', (520, 260), (30, 31, 34))
-    font_bold = ImageFont.truetype('assets/arialbd.ttf', 28)
-    font_regular = ImageFont.truetype('assets/arial.ttf', 16)
+    font_bold = ImageFont.truetype(BASE_DIR / 'assets' / 'arialbd.ttf', 28)
+    font_regular = ImageFont.truetype(BASE_DIR / 'assets' / 'arial.ttf', 16)
     draw = ImageDraw.Draw(image)
     avatar = Image.open(io.BytesIO(avatar_bytes)).convert('RGB').resize((72, 72))
     mask = Image.new('L', (72, 72), 0)

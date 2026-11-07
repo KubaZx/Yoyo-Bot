@@ -6,8 +6,10 @@ import logging
 from dotenv import load_dotenv
 from utils.data import get_player_db, get_achievements, unlock_achievement, save_player
 from discord import app_commands
+from pathlib import Path
 
-load_dotenv(dotenv_path='.env')
+BASE_DIR = Path(__file__).parent
+load_dotenv(dotenv_path=BASE_DIR / '.env')
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 
 

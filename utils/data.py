@@ -1,10 +1,13 @@
 import sqlite3
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent.parent
 
 def get_person_key(user_id, guild_id):
     return f"{user_id}_{guild_id}"
 
 def init_db():
-    with open('schema.sql', 'r', encoding='utf-8') as file:
+    with open(BASE_DIR / 'schema.sql', 'r', encoding='utf-8') as file:
         schema = file.read()
     connection.executescript(schema)
 
@@ -92,7 +95,7 @@ def get_server_players(guild_id):
                               ).fetchall()
     return [dict(row) for row in rows]
 
-connection = sqlite3.connect('yoyo.db')
+connection = sqlite3.connect(BASE_DIR / 'yoyo.db')
 connection.row_factory = sqlite3.Row
 init_db()
 DEFAULT_SETTINGS = {'ai_rate_limit': True}

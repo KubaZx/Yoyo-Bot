@@ -16,7 +16,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_my_stats",
-            "description": "Returns the stats of the user who is asking: xp, level, money, last_daily, messages (count towards the next 100-message reward), total_messages, active_title, boost_until, protected_until, boost_last_bought, protection_last_bought, unlocked_achievements, all achievements with their requirements, and the current time. Use it only when the user asks about their own stats and progress.",
+            "description": "Returns the stats of the user who is asking: xp (it belongs to the current level, it's not total xp), xp_to_next_level, level, level_rule, money, last_daily, messages (count towards the next 100-message reward), total_messages, active_title, boost_until, protected_until, boost_last_bought, protection_last_bought, unlocked_achievements, all achievements with their requirements, and the current time. Use it only when the user asks about their own stats and progress.",
             "parameters": {"type": "object", "properties": {}}
         }
     }
@@ -31,6 +31,8 @@ def get_my_stats(user_id, guild_id):
         "500_money": "Have at least 500 money"
     }
     player_data['current_time'] = time.time()
+    player_data['xp_to_next_level'] = player_data['level'] * 100 - player_data['xp']
+    player_data['level_rule'] = "To reach the next level: your current level * 100, xp = 0 after reaching the next level"
     return player_data
 
 class AI(commands.Cog):

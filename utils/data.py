@@ -43,6 +43,12 @@ def get_inventory(user_id, guild_id):
                        ).fetchall()
     return [row['item_id'] for row in rows]
 
+def get_server_inventory(guild_id):
+    rows = connection.execute("SELECT user_id, item_id FROM inventory WHERE guild_id = ?",
+                              (guild_id,)
+                              ).fetchall()
+    return [dict(row) for row in rows]
+
 def unlock_achievement(user_id, guild_id, achievement):
     connection.execute("INSERT INTO achievements (user_id, guild_id, achievement) VALUES(?, ?, ?)",
                        (user_id, guild_id, achievement))

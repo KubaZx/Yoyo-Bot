@@ -3,7 +3,7 @@ import time
 import discord
 import logging
 from discord.ext import commands
-from utils.data import get_setting, clear_memory, get_memory, add_memory, get_player_db, get_achievements, get_server_inventory, get_inventory
+from utils.data import get_setting, clear_memory, get_memory, add_memory, get_player_db, get_achievements, get_server_inventory, get_inventory, SHOP_ITEMS
 from utils.ai_client import openai_client
 from discord import app_commands
 
@@ -24,7 +24,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_server_inventory",
-            "description": "Returns the items owned by all players on this server. Each item has an owner field, which is already a Discord mention like <@123>. Copy it exactly as it is and never show raw user IDs. Use it only when the user asks about the inventory of other players on this server.",
+            "description": "Returns the items owned by all players on this server. Each item has an owner field, which is already a Discord mention like <@123>. Copy it exactly as it is and never show raw user IDs. Each item also has: type, name and description. Use the type to find items of a given kind. Use the name when talking about an item. Use the description to fully understand what this item is. Use this tool only when the user asks about the inventory of other players on this server.",
             "parameters": {"type": "object", "properties": {}}
         }
     }
@@ -50,7 +50,9 @@ def get_server_inventory_for_ai(guild_id):
     for item in items_data:
         new_item = {
             "owner": f"<@{item['user_id']}>",
-            "item_id": item['item_id']
+            "type": SHOP_ITEMS[item['item_id']]['type'],
+            "name": SHOP_ITEMS[item['item_id']]['name'],
+            "description": SHOP_ITEMS[item['item_id']]['description']
         }
         server_items_data.append(new_item)
     return server_items_data

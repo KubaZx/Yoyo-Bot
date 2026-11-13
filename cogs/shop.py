@@ -68,7 +68,6 @@ class Shop(commands.Cog):
     @app_commands.command(name='equip', description='Equip a title you own')
     @app_commands.choices(title=[
         app_commands.Choice(name='Pro title', value='title_pro')
-
     ])
     async def equip(self, interaction: discord.Interaction, title: str):
         inventory = get_inventory(interaction.user.id, interaction.guild.id)

@@ -24,7 +24,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_server_inventory",
-            "description": "Returns the items owned by all players on this server, with the user_id of each owner. Show players in <@user_id> format. Use it only when the user asks about the inventory of other players on this server.",
+            "description": "Returns the items owned by all players on this server. Each item has an owner field, which is already a Discord mention like <@123>. Copy it exactly as it is and never show raw user IDs. Use it only when the user asks about the inventory of other players on this server.",
             "parameters": {"type": "object", "properties": {}}
         }
     }
@@ -43,6 +43,17 @@ def get_my_stats(user_id, guild_id):
     player_data['xp_to_next_level'] = player_data['level'] * 100 - player_data['xp']
     player_data['level_rule'] = "To reach the next level: your current level * 100, xp = 0 after reaching the next level"
     return player_data
+
+def get_server_inventory_for_ai(guild_id):
+    items_data = get_server_inventory(guild_id)
+    server_items_data = []
+    for item in items_data:
+        new_item = {
+            "owner": f"<@{item['user_id']}>",
+            "item_id": item['item_id']
+        }
+        server_items_data.append(new_item)
+    return server_items_data
 
 class AI(commands.Cog):
     def __init__(self, bot):
@@ -102,7 +113,7 @@ class AI(commands.Cog):
                                 "content": json.dumps(result)
                             })
                         elif tool_call.function.name == "get_server_inventory":
-                            result = get_server_inventory(interaction.guild.id)
+                            result = get_server_inventory_for_ai(interaction.guild.id)
                             messages_to_send.append({
                                 "role": "tool",
                                 "tool_call_id": tool_call.id,

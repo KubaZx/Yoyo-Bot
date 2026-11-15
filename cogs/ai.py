@@ -87,7 +87,7 @@ class AI(commands.Cog):
             await interaction.followup.send("Write your question!")
             return
         messages_to_send = get_memory(interaction.user.id, interaction.guild.id, 4)
-        messages_to_send.insert(0, {"role": "system", "content": "Answer concisely and stay on topic. Discord has a 2000 character limit, so don't write more than that. You can be casual and use light humor to keep the conversation fun. Discord doesn't support markdown tables, use bullet lists instead."})
+        messages_to_send.insert(0, {"role": "system", "content": "You are Yoyo Bot, a Discord bot that can interact with people with many features like levels, economy, item shop, minigames, AI chat and others. Titles and roles come only from the item shop, where people can buy them. Always get player data from your tools, never guess. Answer concisely and stay on topic. Discord has a 2000 character limit, so don't write more than that. You can be casual and use light humor to keep the conversation fun. Discord doesn't support markdown tables, use bullet lists instead."})
         messages_to_send.append({"role": "user", "content": question})
         extra_body = None
         should_stream = True
@@ -109,18 +109,15 @@ class AI(commands.Cog):
                     for tool_call in message.tool_calls:
                         if tool_call.function.name == "get_my_stats":
                             result = get_my_stats(interaction.user.id, interaction.guild.id)
-                            messages_to_send.append({
-                                "role": "tool",
-                                "tool_call_id": tool_call.id,
-                                "content": json.dumps(result)
-                            })
                         elif tool_call.function.name == "get_server_inventory":
                             result = get_server_inventory_for_ai(interaction.guild.id)
-                            messages_to_send.append({
-                                "role": "tool",
-                                "tool_call_id": tool_call.id,
-                                "content": json.dumps(result)
-                            })
+                        else:
+                            result = {"error": f"Tool {tool_call.function.name} doesn't exist"}
+                        messages_to_send.append({
+                            "role": "tool",
+                            "tool_call_id": tool_call.id,
+                            "content": json.dumps(result)
+                        })
                 else:
                     collected_text = message.content
                     should_stream = False

@@ -10,6 +10,7 @@ from discord import app_commands
 logger = logging.getLogger(__name__)
 AI_CALL_LIMIT = 5
 AI_RATE_WINDOW = 3600
+AI_MAX_TOOL_CALL_ROUNDS = 3
 
 TOOLS = [
     {
@@ -104,7 +105,8 @@ class AI(commands.Cog):
                     extra_body=extra_body
                 )
                 message = ai_response.choices[0].message
-                while message.tool_calls:
+                tool_call_rounds = 0
+                while message.tool_calls and tool_call_rounds < AI_MAX_TOOL_CALL_ROUNDS:
                     messages_to_send.append(message)
                     for tool_call in message.tool_calls:
                         if tool_call.function.name == "get_my_stats":
@@ -123,6 +125,17 @@ class AI(commands.Cog):
                         messages=messages_to_send,
                         max_tokens=max_tokens,
                         tools=TOOLS,
+                        extra_body=extra_body
+                    )
+                    message = ai_response.choices[0].message
+                    tool_call_rounds += 1
+                if message.tool_calls:
+                    ai_response = await openai_client.chat.completions.create(
+                        model=model,
+                        messages=messages_to_send,
+                        max_tokens=max_tokens,
+                        tools=TOOLS,
+                        tool_choice="none",
                         extra_body=extra_body
                     )
                     message = ai_response.choices[0].message

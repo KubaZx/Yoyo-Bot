@@ -96,15 +96,15 @@ class AI(commands.Cog):
             extra_body = {"thinking": {"type": "disabled"}}
         try:
             if use_tools:
-                first_response = await openai_client.chat.completions.create(
+                ai_response = await openai_client.chat.completions.create(
                     model=model,
                     messages=messages_to_send,
                     max_tokens=max_tokens,
                     tools=TOOLS,
                     extra_body=extra_body
                 )
-                message = first_response.choices[0].message
-                if message.tool_calls:
+                message = ai_response.choices[0].message
+                while message.tool_calls:
                     messages_to_send.append(message)
                     for tool_call in message.tool_calls:
                         if tool_call.function.name == "get_my_stats":
@@ -118,9 +118,16 @@ class AI(commands.Cog):
                             "tool_call_id": tool_call.id,
                             "content": json.dumps(result)
                         })
-                else:
-                    collected_text = message.content
-                    should_stream = False
+                    ai_response = await openai_client.chat.completions.create(
+                        model=model,
+                        messages=messages_to_send,
+                        max_tokens=max_tokens,
+                        tools=TOOLS,
+                        extra_body=extra_body
+                    )
+                    message = ai_response.choices[0].message
+                collected_text = message.content
+                should_stream = False
             if should_stream:
                 last_edit = time.time()
                 response = await openai_client.chat.completions.create(
